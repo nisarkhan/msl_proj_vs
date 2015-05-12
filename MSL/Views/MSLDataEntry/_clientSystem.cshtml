@@ -1,0 +1,102 @@
+﻿@model MSL.Models.ClientSystemViewModel
+ 
+<div class="panel-body" ng-controller="dashboard">
+    <form name="form" class="form-horizontal" ng-validate="save(data)" novalidate>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+
+                        <br />
+                        <div class="row">
+                            <div class="col-xs-6">
+                                <div class="form-group">
+                                    <label for="" class="col-xs-6 control-label">Client:</label>
+                                    <div class="col-xs-6">
+                                        @Html.EditorFor(model => model.Client, new { htmlAttributes = new { @class = "form-control" } })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-xs-6">
+                                <div class="row form-group">
+                                    <label class="col-xs-6 control-label">Client Division:</label>
+                                    <div class="col-xs-6">
+                                        @Html.DropDownListFor(m => m.ClientDivision,
+                                        new List<SelectListItem>
+                                        {
+                                            new SelectListItem() { Text = "Show All Records", Value = "Show All Records" },
+                                            new SelectListItem() { Text = "Show Invalid Records", Value = "Show Invalid Records" },
+                                            new SelectListItem() { Text = "Show Valid Records", Value = "Show Valid Records" }
+                                        }, new { @class = "form-control", Name = "submitButton" })
+
+                                        @*<div class="alert alert-danger" ng-show="form.$submitted && form.client_division.$error.required">Select a type.</div>*@
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-xs-6">
+                                <div class="row form-group">
+                                    <label class="col-xs-6 control-label">Client Cost Center:</label>
+                                    <div class="col-xs-6">
+                                        @Html.DropDownListFor(m => Model.ClientCostCenter,
+                                        new List<SelectListItem>
+                                        {
+                                            new SelectListItem() { Text = "Show All Records", Value = "Show All Records" },
+                                            new SelectListItem() { Text = "Show Invalid Records", Value = "Show Invalid Records" },
+                                            new SelectListItem() { Text = "Show Valid Records", Value = "Show Valid Records" }
+                                        }, new { @class = "form-control", Name = "submitButton" })
+
+                                        @*<div class="alert alert-danger" ng-show="form.$submitted && form.client_cost_center.$error.required">Select a type.</div>*@
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-xs-6">
+                                <div class="form-group">
+                                    <label for="" class="col-xs-6 control-label">MS Name:</label>
+                                    <div class="col-xs-6"> 
+                                        @Html.EditorFor(model => model.MSName, new { htmlAttributes = new { @class = "form-control" } })
+                                         
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-xs-6">
+                                <div class="form-group">
+                                    <label for="" class="col-xs-6 control-label">SBU/SDM:</label>
+                                    <div class="col-xs-6">
+                                        @Html.TextAreaFor(m => m.SBUSDM, 6, 80, new { htmlAttributes = new { @class = "form-control" } })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row text-right">
+            <div class="row text-right">
+                <div class="col-xs-12">
+                    <button class="btn btn-success" type="submit" id="btnSavetoDB" name="submitButton" value="Save to DB">
+                        <span> <i class="fa fa-save"></i>  Save to Database </span>
+                    </button>
+                    &nbsp;&nbsp;&nbsp;
+                    <button class="btn btn-danger" type="submit" id="btnRemoveFromGrid" name="submitButton" value="Remove Item From Grid">
+                        <span> <i class="fa fa-remove"></i>  Remove </span>
+                    </button>
+                    &nbsp;&nbsp;&nbsp;
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

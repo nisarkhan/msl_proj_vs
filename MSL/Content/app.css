@@ -1,0 +1,90 @@
+﻿
+ .space-box {
+        margin: 10px;
+    }
+
+    .alert-danger {
+        background-color: #D9534F;
+        border-color: #C34844;
+        color: #FFF;
+    }
+
+    .redcolor {
+        color: red;
+    }
+
+    .greencolor {
+        color: green;
+    }
+
+    .webgrid-table {
+        font-family: Arial,Helvetica,sans-serif;
+        font-size: 14px;
+        font-weight: normal;
+        width: 650px;
+        display: table;
+        border-collapse: collapse;
+        border: solid px #C5C5C5;
+        background-color: white;
+    }
+
+        .webgrid-table td, th {
+            border: 1px solid #C5C5C5;
+            padding: 3px 7px 2px;
+        }
+
+    .webgrid-header th, .webgrid-header a {
+        /*background-color: #E3E3E3;*/
+        color: black;
+        text-align: center;
+    }
+
+    .webgrid-footer {
+        padding: 3px 7px 2px;
+        background-color: #F5F5F5;
+        text-align: left;
+    }
+
+    .webgrid-row-style {
+        padding: 3px 7px 2px;
+    }
+
+    .webgrid-alternating-row {
+        background-color: #F5F5F5;
+        padding: 3px 7px 2px;
+    }
+
+    .webgrid-selected-row
+    {
+        background-color: yellow;
+    }
+
+    .yellow{
+        background: yellow;
+    }
+    .record-results {
+        display: inline-block;
+        margin-bottom: -3px;
+    }
+     
+
+ div#myLoadingElement {  
+
+        
+        font:normal 16px Tahoma, Geneva, sans-serif; 
+        margin-left: -50px;
+        margin-top: -50px;
+        overflow: auto;       
+        width: 100px;
+        height: 100px;
+        position: fixed;
+        top: 50%;
+        left: 50%; 
+        text-align: center;
+        display:    none;        
+        z-index:    1000;
+        background: rgba( 255, 255, 255, .8 )
+                    url(../../Content/images/loading.gif) 50% 50%  no-repeat
+
+    }
+

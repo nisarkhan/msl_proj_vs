@@ -1,0 +1,124 @@
+﻿<!DOCTYPE html>
+<html ng-app="userApp">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - My ASP.NET Application</title>
+    @*@Styles.Render("~/Content/css")*@
+    @Scripts.Render("~/bundles/modernizr")
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/Content/Site.css" rel="stylesheet" />
+    <link href="~/Content/css/font-awesome.css" rel="stylesheet" />
+    <link href="~/Content/toastr.min.css" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="//www.xerox.com/assets/css/xrx/xrx_bnr_v3.min.css" />
+    <link rel="stylesheet" type="text/css" href="//www.xerox.com/assets/css/xrx/xrx_bnr.min.css" />
+    <link rel="stylesheet" type="text/css" href="//www.xerox.com/assets/css/xrx/xrx_bnr_v3.responsive.embed.min.css" />
+    <link rel="stylesheet" type="text/css" href="//www.xerox.com/assets/css/xrx/xrx_bnr.responsive.embed.min.css" />
+
+    <script src="~/scripts/js/vendor/jquery.min.js"></script>
+    <script src="~/scripts/js/vendor/bootstrap.min.js"></script>
+
+    <script src="~/scripts/js/vendor/angular/angular.js"></script>
+    <script src="~/scripts/js/vendor/angular/angular-route.js"></script>
+    <script src="~/scripts/js/vendor/angular/angular-resource.js"></script>
+    <script src="~/scripts/js/vendor/angular/angular-animate.js"></script>
+    <script src="~/scripts/js/vendor/angular/angular-cookies.js"></script>
+
+    <script src="https://code.jquery.com/ui/1.11.1/jquery-ui.min.js"></script>
+    <link href="https://ajax.googleapis.com/ajax/libs/jqueryui/1/themes/flick/jquery-ui.css" rel="stylesheet">
+
+    
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" />
+
+</head>
+
+
+<div id="xrx_bnr_v3_hdr" class="">
+
+    <div id="xrx_bnr_v3_hdr_inner">
+        <a id="xrx_bnr_v3_hdr_lnk_logo" href="http://www.xerox.com/" name="&amp;lid=hdr-logo-home"><span>Xerox.com</span></a>
+        <div id="xrx_bnr_v3_hdr_nav_button" role="button" title="Menu"><span></span></div>
+
+        <div id="xrx_bnr_v3_hdr_search">
+            <div id="xrx_bnr_v3_hdr_search_button" role="button" title="Search"></div>
+            <div id="xrx_bnr_v3_hdr_search_input_wrapper">
+                <form action="https://www.xerox.com/perl-bin/searchlog.pl" method="get" id="xrx_bnr_hdr_utilitynav_search_form" novalidate="" role="search" class="elc-form" autocomplete="off">
+                    <span class="elc-searchWrapper elc-app-0 "><input type="text" name="searchString" placeholder="Search Xerox" required="" style="display: none;"><span class="elc-search"><div class="elc-hint-container elc-pngfix "><div class="elc-hint-container-focus" style="opacity: 0;"></div><input type="text" class="elc-searchInput elc-hint-search" autocomplete="off" id="elc-searchInput-0" autocorrect="off" autocapitalize="off" spellcheck="false" maxlength="1000" disablelegacyinputchecking="true" title=""><input type="text" class="elc-hint-placeholder default" tabindex="-1" readonly="readOnly" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" style="visibility: visible; top: auto;"><div class="elc-hint-icon-container" contenteditable="false" style="display: none;"><div class="loading"><div class="spinjs"><div class="spinner" aria-role="progressbar" style="position: relative; z-index: 2000000000; left: 0px; top: 0px;"><div style="position: absolute; top: -1px; opacity: 0.25; -webkit-animation: opacity-100-25-0-11 1s linear infinite; -webkit-animation-play-state: initial;"><div style="position: absolute; width: 5px; height: 2px; box-shadow: rgba(0, 0, 0, 0.0980392) 0px 0px 1px; transform-origin: left 50% 0px; transform: rotate(0deg) translate(3px, 0px); border-radius: 1px; background: rgb(136, 136, 136);"></div></div><div style="position: absolute; top: -1px; opacity: 0.25; -webkit-animation: opacity-100-25-1-11 1s linear infinite; -webkit-animation-play-state: initial;"><div style="position: absolute; width: 5px; height: 2px; box-shadow: rgba(0, 0, 0, 0.0980392) 0px 0px 1px; transform-origin: left 50% 0px; transform: rotate(32deg) translate(3px, 0px); border-radius: 1px; background: rgb(136, 136, 136);"></div></div><div style="position: absolute; top: -1px; opacity: 0.25; -webkit-animation: opacity-100-25-2-11 1s linear infinite; -webkit-animation-play-state: initial;"><div style="position: absolute; width: 5px; height: 2px; box-shadow: rgba(0, 0, 0, 0.0980392) 0px 0px 1px; transform-origin: left 50% 0px; transform: rotate(65deg) translate(3px, 0px); border-radius: 1px; background: rgb(136, 136, 136);"></div></div><div style="position: absolute; top: -1px; opacity: 0.25; -webkit-animation: opacity-100-25-3-11 1s linear infinite; -webkit-animation-play-state: initial;"><div style="position: absolute; width: 5px; height: 2px; box-shadow: rgba(0, 0, 0, 0.0980392) 0px 0px 1px; transform-origin: left 50% 0px; transform: rotate(98deg) translate(3px, 0px); border-radius: 1px; background: rgb(136, 136, 136);"></div></div><div style="position: absolute; top: -1px; opacity: 0.25; -webkit-animation: opacity-100-25-4-11 1s linear infinite; -webkit-animation-play-state: initial;"><div style="position: absolute; width: 5px; height: 2px; box-shadow: rgba(0, 0, 0, 0.0980392) 0px 0px 1px; transform-origin: left 50% 0px; transform: rotate(130deg) translate(3px, 0px); border-radius: 1px; background: rgb(136, 136, 136);"></div></div><div style="position: absolute; top: -1px; opacity: 0.25; -webkit-animation: opacity-100-25-5-11 1s linear infinite; -webkit-animation-play-state: initial;"><div style="position: absolute; width: 5px; height: 2px; box-shadow: rgba(0, 0, 0, 0.0980392) 0px 0px 1px; transform-origin: left 50% 0px; transform: rotate(163deg) translate(3px, 0px); border-radius: 1px; background: rgb(136, 136, 136);"></div></div><div style="position: absolute; top: -1px; opacity: 0.25; -webkit-animation: opacity-100-25-6-11 1s linear infinite; -webkit-animation-play-state: initial;"><div style="position: absolute; width: 5px; height: 2px; box-shadow: rgba(0, 0, 0, 0.0980392) 0px 0px 1px; transform-origin: left 50% 0px; transform: rotate(196deg) translate(3px, 0px); border-radius: 1px; background: rgb(136, 136, 136);"></div></div><div style="position: absolute; top: -1px; opacity: 0.25; -webkit-animation: opacity-100-25-7-11 1s linear infinite; -webkit-animation-play-state: initial;"><div style="position: absolute; width: 5px; height: 2px; box-shadow: rgba(0, 0, 0, 0.0980392) 0px 0px 1px; transform-origin: left 50% 0px; transform: rotate(229deg) translate(3px, 0px); border-radius: 1px; background: rgb(136, 136, 136);"></div></div><div style="position: absolute; top: -1px; opacity: 0.25; -webkit-animation: opacity-100-25-8-11 1s linear infinite; -webkit-animation-play-state: initial;"><div style="position: absolute; width: 5px; height: 2px; box-shadow: rgba(0, 0, 0, 0.0980392) 0px 0px 1px; transform-origin: left 50% 0px; transform: rotate(261deg) translate(3px, 0px); border-radius: 1px; background: rgb(136, 136, 136);"></div></div><div style="position: absolute; top: -1px; opacity: 0.25; -webkit-animation: opacity-100-25-9-11 1s linear infinite; -webkit-animation-play-state: initial;"><div style="position: absolute; width: 5px; height: 2px; box-shadow: rgba(0, 0, 0, 0.0980392) 0px 0px 1px; transform-origin: left 50% 0px; transform: rotate(294deg) translate(3px, 0px); border-radius: 1px; background: rgb(136, 136, 136);"></div></div><div style="position: absolute; top: -1px; opacity: 0.25; -webkit-animation: opacity-100-25-10-11 1s linear infinite; -webkit-animation-play-state: initial;"><div style="position: absolute; width: 5px; height: 2px; box-shadow: rgba(0, 0, 0, 0.0980392) 0px 0px 1px; transform-origin: left 50% 0px; transform: rotate(327deg) translate(3px, 0px); border-radius: 1px; background: rgb(136, 136, 136);"></div></div></div></div></div><div class="clear"></div></div></div><input type="submit" class="elc-searchBtn" value=""></span><div class="elc-clearBoth"></div><span class="elc-resultsWrapper  elc-hidden elc-css3fix"></span></span>
+                    <input name="XOGlang" value="en_US" type="hidden">
+                    <input type="hidden" name="js_avail" value="1">
+                </form>
+            </div>
+        </div>
+        <div id="xrx_bnr_v3_hdr_nav" role="navigation">
+            <ul id="xrx_bnr_v3_hdr_nav_primary" role="menubar">
+                @*<li id="xrx_bnr_hdr_lnk_services" role="menuitem">
+                    <a href="#" class="xrx_hide_tablet xrx_hide_desktop">@Html.ActionLink("MSL Bulk Upload", "Index", "MSLSystemAdmin")</a>
+                </li>*@
+                <li id="xrx_bnr_hdr_lnk_services" role="menuitem">
+                    <a href="#" class="xrx_hide_tablet xrx_hide_desktop">@Html.ActionLink("MSL Bulk Upload", "Index", "BulkUpload")</a>
+                </li>
+                <li id="xrx_bnr_hdr_lnk_services" role="menuitem">
+                    <a href="#" class="xrx_hide_tablet xrx_hide_desktop">@Html.ActionLink("MSL Data-Entry", "Index", "MSLDataEntry")</a>
+                </li>
+            </ul>
+
+
+            <ul id="xrx_bnr_v3_hdr_nav_secondary">
+
+                <li id="xrx_bnr_hdr_utilitynav_locale">
+                    <span style="top:-12px;left:-260px;right:400px;text-align:left;font-size:x-large;">TKO - MSL </span>
+
+                </li>
+
+                @*<li id="xrx_bnr_hdr_utilitynav_locale" class="xrx_bnr_hdr_utilitynav_first">
+                    <span>United States </span>
+                    <a id="xrx_bnr_hdr_utilitynav_locale_selector" name="&amp;lid=hdr-country-select" href="http://www.xerox.com/about-xerox/country-select/xxxx.html?mode=home&amp;LOB=CORP" title="change country"><span>Select your country</span></a>
+                </li>
+
+                <li class="xrx_bnr_first" id="xrx_bnr_util_account"><a name="&amp;lid=hdr-account" href="http://www.xerox.com/about-xerox/account-management/enus.html">Account</a></li>
+                <li id="xrx_bnr_util_login"><a name="&amp;lid=hdr-log in" href="https://www.accounts.xerox.com/auth/login.jsf?&amp;locale=en_US">Log In</a></li>
+                <li id="xrx_bnr_util_logout" style="display: none"><a name="&amp;lid=hdr-log out" href="https://www.accounts.xerox.com/auth/logout.jsf?locale=en_US">Log Out</a></li>*@
+            </ul>
+        </div>
+    </div>
+</div>
+
+<body>
+    @*<div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                @Html.ActionLink("TKO - MSL", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    @*<li>@Html.ActionLink("Home", "Index", "Home")</li>
+                    <li>@Html.ActionLink("MSL System Administrator", "Index", "MSLSystemAdmin")</li>
+                    <li>@Html.ActionLink("About", "About", "Home")</li>
+                    <li>@Html.ActionLink("Contact", "Contact", "Home")</li>*@
+    @*<li>@Html.ActionLink("Bulk-Upload2", "Index", "BulkUpload2")</li>*@
+    @*</ul>
+            @Html.Partial("_LoginPartial")
+        @*</div>*@
+    @*</div>
+        </div>*@
+
+
+    <div class="container body-content">
+        @RenderBody()
+        <hr />
+        <footer>
+            <p>&copy; @DateTime.Now.Year - Xerox - v1</p>
+        </footer>
+    </div>
+    <script src="~/Scripts/customer.js"></script>
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+</body>
+</html>

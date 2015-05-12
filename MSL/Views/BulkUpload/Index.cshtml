@@ -1,0 +1,1024 @@
+﻿@model MSL.Models.ImportViewModelManager
+
+
+@section scripts{
+    <script src="~/Scripts/AppScripts/PagerScript.js"></script>
+}
+
+@if (TempData["message"] != null)
+{ @Html.Partial("~/Views/Shared/_notification.cshtml");
+}
+
+<link href="~/Content/app.css" rel="stylesheet" />
+
+<style type="text/css">
+   
+</style>
+
+<style type="text/css">
+   
+</style>
+
+@{
+    var grid = new WebGrid();
+    if (Model != null)
+    {
+        grid = new WebGrid(source: Model.DataModel, canPage: true, rowsPerPage: Model.PageSize /*, ajaxUpdateContainerId: "webgrid_id"*/); //if you have the ajaxUpdateContainerId the background color will nto work for the page 2
+        grid.Pager(WebGridPagerModes.All);
+    }
+}
+
+
+<div id="myLoadingElement" >
+    <span style="color:red;">Please wait...</span>
+</div>
+
+
+
+<br /><br />
+@*<div class="col-lg-12">
+        @Html.ValidationSummary(true, "Errors:", new { @class = "alert alert-danger" })
+</div>*@
+
+<div class="col-lg-12">
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            Upload Server Import Template File:
+        </div>
+        <div class="panel-body">
+
+            @using (Html.BeginForm("Index", "BulkUpload", FormMethod.Post, new { enctype = "multipart/form-data", @id = "form_header_file" }))
+            {
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="panel-body">
+                            <div class="row"> 
+                                @*<div class="col-xs-7">
+                                        <input name="file" type="file" class="form-control"  />
+                                    </div>*@
+                                <div class="form-group">
+                                    <div class="col-xs-7">
+                                        <input id="fileUpload" name="file" type="file" class="form-control" onchange="checkfile(this);" />
+                                    </div>
+                                    <div class="col-xs-3">
+                                        <button id="btnImportData" class="btn btn-info" type="submit">
+                                            <span> <i class="fa fa-cloud-upload"></i>  Import Data </span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <p></p>
+                            <div class="row">
+                                <div class="col-xs-10">
+                                    <div><b>File Location :</b> @Session["fileLocation"]</div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<div class="col-lg-12" id="detaildiv" >
+    <div class="panel panel-info">
+
+        <div class="panel-heading">
+            <h3 class="panel-title">Edit/Verify Imported Server Records</h3>
+        </div>
+
+        <div class="panel-body">
+            <div class="row" style="border-color:red;border:2px;">
+
+                <div class="form-inline">
+                    <div class="form-group">
+                        @using (Html.BeginForm("Index", "BulkUpload", FormMethod.Post, new { @id = "form_header_pager" }))
+                        {
+                            <label for="PageSize" style="margin-left:20px;">Rows per page:</label>
+                            @Html.DropDownListFor(m => m.PageSize,
+                                        new List<SelectListItem>
+                                        {
+                                            new SelectListItem() { Text = "5", Value = "5" },
+                                            new SelectListItem() { Text = "10", Value = "10" },
+                                            new SelectListItem() { Text = "25", Value = "25" },
+                                            new SelectListItem() { Text = "50", Value = "50" },
+                                            new SelectListItem() { Text = "ALL", Value = "ALL" }
+                                        }, new { @class = "form-control", Name = "submitButton" })
+                        }
+                    </div>
+                    &nbsp;&nbsp;&nbsp;&nbsp;
+                    <div class="form-group ">
+                        <span class="record-results">
+                            <strong>Total records:</strong>&nbsp; @if (Model != null)
+                            {
+                                <span>@Model.DataModel.Count()</span>
+                            }
+                            else
+                            {
+                                <span>0</span>
+                            }
+                        </span>
+                    </div>
+
+                    <div class="form-group ">
+                        <span class="record-results">
+                            <strong>Total Failed records:</strong>&nbsp; @if (Model != null)
+                            {
+                                <span id="validatefailedcount">@Model.ValidationFailed.Count()</span>
+                            }
+                            else
+                            {
+                                <span>0</span>
+                            }
+                        </span>
+                    </div>
+
+                    &nbsp;&nbsp;&nbsp;&nbsp;
+                    <label for="showrecords">Show Records:</label>&nbsp;
+                    <div class="form-group">
+                        @using (Html.BeginForm("Index", "BulkUpload", FormMethod.Post, new { @id = "form_header_show_records" }))
+                        {
+                            @Html.DropDownListFor(m => m.ShowRecords,
+                                new List<SelectListItem>
+                                {
+                                    new SelectListItem() { Text = "Show All Records", Value = "Show All Records" },
+                                    new SelectListItem() { Text = "Show Invalid Records", Value = "Show Invalid Records" },
+                                    new SelectListItem() { Text = "Show Valid Records", Value = "Show Valid Records" }
+                                }, new { @class = "form-control", Name = "submitButton" })
+                        }
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="col-lg-14">
+                <div class="panel-body">
+                    <div class="row">
+                        @using (Html.BeginForm("Index", "BulkUpload", FormMethod.Post, new { @id = "form_header" }))
+                        {
+
+
+                            <div class="row text-right">
+                                <div class="col-xs-12">
+                                    <button class="btn btn-success" type="submit" id="btnSavetoDB" name="submitButton" value="Save to DB">
+                                        <span> <i class="fa fa-save"></i>  Save to Database </span>
+                                    </button>
+                                    &nbsp;&nbsp;&nbsp;
+                                    <button class="btn btn-danger" type="submit" id="btnRemoveFromGrid" name="submitButton" value="Remove Item From Grid">
+                                        <span> <i class="fa fa-remove"></i>  Remove </span>
+                                    </button>
+                                    &nbsp;&nbsp;&nbsp;
+                                    <button class="btn btn-info" type="submit" id="btnRefreshGrid" name="submitButton" value="Refresh Grid">
+                                        <span> <i class="fa fa-refresh"></i>  Refresh Grid </span>
+                                    </button>
+                                    &nbsp;&nbsp;&nbsp;
+                                    <button class="btn btn-primary" type="submit" id="btnValidateData" name="submitButton" value="Validate Data">
+                                        <span> <i class="fa fa-exchange"></i>  Validate Data </span>
+                                    </button>
+                                </div>
+                            </div>
+                            <hr />
+                            <div class="test" style="overflow: scroll; width: 100%">
+                                <div style="width: 1000px">
+                                    @if (Model != null)
+                                    {
+                                        @grid.GetHtml(htmlAttributes: new { id = "webgrid_id" },
+                                                    tableStyle: "table table-bordered", //table table-hover
+                                                    headerStyle: "webgrid-header",
+                                                    footerStyle: "webgrid-footer",
+                                                    alternatingRowStyle: "webgrid-alternating-row",
+                                                    selectedRowStyle: "webgrid-selected-row",
+                                                    rowStyle: "webgrid-row-style",
+                                                    columns: grid.Columns
+                                                    (
+                                                        grid.Column(header: "Delete", format: @<text><input type="checkbox" name="selectedRow_@(item.WebGrid.Rows.IndexOf(item))" value="@(item.WebGrid.Rows.IndexOf(item))" class="form-controlx" style="margin: 1px 1px 1px 2px;" /></text>),
+
+                                                        grid.Column(header: "", format: (item) =>
+                                                        {
+                                                            int row = item.WebGrid.Rows.IndexOf(item);
+                                                            string value = item.Location;
+
+                                                            if (item.Validations.Count > 0)
+                                                            {
+                                                                return Html.Raw("<div class=\"input-group\" style=\"align:center\" ><span class=\"fa fa-exclamation-circle redcolor\" title=\"some message\"</span></div>");
+                                                            }
+                                                            else
+                                                            {
+                                                                return Html.Raw("<div class=\"input-group\" ><span class=\"fa fa-check-square-o greencolor\" </span></div>");
+                                                            }
+                                                        }),
+
+
+                                                        grid.Column(header: "Row", format: @<text><input readonly name="rowNumber_@(item.WebGrid.Rows.IndexOf(item))" value="@(item.WebGrid.Rows.IndexOf(item) + 1)" style="width:40px;border:0; background-color:transparent;text-align:center" /></text>),
+
+grid.Column(header: "Customer", format: (item) =>
+{
+    int row = item.WebGrid.Rows.IndexOf(item);
+    string text = item.Customer;
+    string icon = item.SetValidationFailed.Customer_ValidationFailed;
+    foreach (var itemFailed in item.Validations)
+    {
+        if (itemFailed.Name == "Customer")
+        {
+            if (!string.IsNullOrEmpty(icon))
+            {
+                return Html.Raw(string.Format("<input type=\"text\" id=\"Customer\" name=\"Customer_{0}\" value=\"{1}\" class=\"form-control redcolor\" style=\"border:1; border-color:red;width:250px;\" /> <div class=\"input-group\">{2}</div>", row, text, icon));
+            }
+        }
+    }
+    return Html.Raw(string.Format("<input type=\"text\" id=\"Customer\" name=\"Customer_{0}\" class=\"form-control\" style=\"width:250px;\" value=\"{1}\" />", row, text));
+}),
+
+grid.Column(header: "Local Name", format: (item) =>
+{
+    int row = item.WebGrid.Rows.IndexOf(item);
+    string text = item.LocalName;
+    string icon = item.SetValidationFailed.LocalName_ValidationFailed;
+    foreach (var itemFailed in item.Validations)
+    {
+        if (itemFailed.Name == "LocalName")
+        {
+            if (!string.IsNullOrEmpty(icon))
+            {
+                return Html.Raw(string.Format("<input type=\"text\" id=\"Customer\" name=\"Customer_{0}\" value=\"{1}\" class=\"form-control redcolor\" style=\"border:1; border-color:red;width:250px;\" /> <div class=\"input-group\">{2}</div>", row, text, icon));
+            }
+        }
+    }
+    return Html.Raw(string.Format("<input type=\"text\" id=\"LocalName\" name=\"LocalName_{0}\" class=\"form-control\" style=\"width:250px;\" value=\"{1}\" />", row, text));
+}),
+
+grid.Column(header: "Serial Number", format: (item) =>
+{
+    int row = item.WebGrid.Rows.IndexOf(item);
+    string text = item.SerialNumber;
+    string icon = item.SetValidationFailed.SerialNumber_ValidationFailed;
+    foreach (var vm in item.Validations)
+    {
+        if (vm.Name == "SerialNumber")
+        {
+            if (!string.IsNullOrEmpty(icon))
+            {
+                return Html.Raw(string.Format("<input type=\"text\" id=\"SerialNumber\" name=\"SerialNumber_{0}\" value=\"{1}\" class=\"form-control redcolor\" style=\"border:1; border-color:red;width:250px;\" /> <div class=\"input-group\">{2}</div>", row, text, icon));
+            }
+        }
+    }
+    return Html.Raw(string.Format("<input type=\"text\" id=\"SerialNumber\" name=\"SerialNumber_{0}\" class=\"form-control\" style=\"width:250px;\" value=\"{1}\" />", row, text));
+}),
+
+grid.Column(header: "System State", format: (item) =>
+{
+    int row = item.WebGrid.Rows.IndexOf(item);
+    string text = item.SystemState;
+    string icon = item.SetValidationFailed.SystemState_ValidationFailed;
+    foreach (var itemFailed in item.Validations)
+    {
+        if (itemFailed.Name == "SystemState")
+        {
+            return Html.Raw(string.Format("<input type=\"text\" id=\"SystemState\" name=\"SystemState_{0}\" value=\"{1}\" class=\"form-control redcolor\" style=\"border:1; border-color:red;width:250px;\" /> <div class=\"input-group\">{2}</div>", row, text, icon));
+        }
+    }
+    return Html.Raw(string.Format("<input type=\"text\" id=\"SystemState\" name=\"SystemState_{0}\" class=\"form-control\" style=\"width:250px;\" value=\"{1}\" />", row, text));
+}),
+
+grid.Column(header: "Server Type", format: (item) =>
+{
+    int row = item.WebGrid.Rows.IndexOf(item);
+    string text = item.ServerType;
+    string icon = item.SetValidationFailed.ServerType_ValidationFailed;
+    foreach (var itemFailed in item.Validations)
+    {
+        if (itemFailed.Name == "ServerType")
+        {
+            return Html.Raw(string.Format("<input type=\"text\" id=\"ServerType\" name=\"ServerType_{0}\" value=\"{1}\" class=\"form-control redcolor\" style=\"border:1; border-color:red;width:250px;\" /> <div class=\"input-group\">{2}</div>", row, text, icon));
+        }
+    }
+    return Html.Raw(string.Format("<input type=\"text\" id=\"ServerType\" name=\"ServerType_{0}\" class=\"form-control\" style=\"width:250px;\" value=\"{1}\" />", row, text));
+}),
+
+grid.Column(header: "Category", format: (item) =>
+{
+    int row = item.WebGrid.Rows.IndexOf(item);
+    string text = item.Category;
+    string icon = item.SetValidationFailed.Category_ValidationFailed;
+    foreach (var itemFailed in item.Validations)
+    {
+        if (itemFailed.Name == "Category")
+        {
+            return Html.Raw(string.Format("<input type=\"text\" id=\"Category\" name=\"Category_{0}\" value=\"{1}\" class=\"form-control redcolor\" style=\"border:1; border-color:red;width:250px;\" /> <div class=\"input-group\">{2}</div>", row, text, icon));
+        }
+    }
+    return Html.Raw(string.Format("<input type=\"text\" id=\"Category\" name=\"Category_{0}\" class=\"form-control\" style=\"width:250px;\" value=\"{1}\" />", row, text));
+}),
+
+grid.Column(header: "Service Category", format: (item) =>
+{
+    int row = item.WebGrid.Rows.IndexOf(item);
+    string text = item.ServiceCategory;
+    string icon = item.SetValidationFailed.ServiceCategory_ValidationFailed;
+    foreach (var itemFailed in item.Validations)
+    {
+        if (itemFailed.Name == "ServiceCategory")
+        {
+            return Html.Raw(string.Format("<input type=\"text\" id=\"ServiceCategory\" name=\"ServiceCategory_{0}\" value=\"{1}\" class=\"form-control redcolor\" style=\"border:1; border-color:red;width:250px;\" /> <div class=\"input-group\">{2}</div>", row, text, icon));
+        }
+    }
+    return Html.Raw(string.Format("<input type=\"text\" id=\"ServiceCategory\" name=\"ServiceCategory_{0}\" class=\"form-control\" style=\"width:250px;\" value=\"{1}\" />", row, text));
+}),
+
+grid.Column(header: "Country", format: (item) =>
+{
+    int row = item.WebGrid.Rows.IndexOf(item);
+    string text = item.Country;
+    string icon = item.SetValidationFailed.Country_ValidationFailed;
+    foreach (var itemFailed in item.Validations)
+    {
+        if (itemFailed.Name == "Country")
+        {
+            return Html.Raw(string.Format("<input type=\"text\" id=\"Country\" name=\"Country_{0}\" value=\"{1}\" class=\"form-control redcolor\" style=\"border:1; border-color:red;width:250px;\" /> <div class=\"input-group\">{2}</div>", row, text, icon));
+        }
+    }
+    return Html.Raw(string.Format("<input type=\"text\" id=\"Country\" name=\"Country_{0}\" class=\"form-control\" style=\"width:250px;\" value=\"{1}\" />", row, text));
+}),
+
+grid.Column(header: "Domain", format: (item) =>
+{
+    int row = item.WebGrid.Rows.IndexOf(item);
+    string text = item.Domain;
+    string icon = item.SetValidationFailed.Domain_ValidationFailed;
+    foreach (var itemFailed in item.Validations)
+    {
+        if (itemFailed.Name == "Domain")
+        {
+            return Html.Raw(string.Format("<input type=\"text\" id=\"Domain\" name=\"Domain_{0}\" value=\"{1}\" class=\"form-control redcolor\" style=\"border:1; border-color:red;width:250px;\" /> <div class=\"input-group\">{2}</div>", row, text, icon));
+        }
+    }
+    return Html.Raw(string.Format("<input type=\"text\" id=\"Domain\" name=\"Domain_{0}\" class=\"form-control\" style=\"width:250px;\" value=\"{1}\" />", row, text));
+}),
+
+grid.Column(header: "Is Local Security", format: (item) =>
+{
+    int row = item.WebGrid.Rows.IndexOf(item);
+    string text = item.IsLocalSecurity;
+    string icon = item.SetValidationFailed.IsLocalSecurity_ValidationFailed;
+    foreach (var itemFailed in item.Validations)
+    {
+        if (itemFailed.Name == "IsLocalSecurity")
+        {
+            return Html.Raw(string.Format("<input type=\"text\" id=\"IsLocalSecurity\" name=\"IsLocalSecurity_{0}\" value=\"{1}\" class=\"form-control redcolor\" style=\"border:1; border-color:red;width:250px;\" /> <div class=\"input-group\">{2}</div>", row, text, icon));
+        }
+    }
+    return Html.Raw(string.Format("<input type=\"text\" id=\"IsLocalSecurity\" name=\"IsLocalSecurity_{0}\" class=\"form-control\" style=\"width:250px;\" value=\"{1}\" />", row, text));
+}),
+
+grid.Column(header: "Security Waiver", format: (item) =>
+{
+    int row = item.WebGrid.Rows.IndexOf(item);
+    string text = item.SecurityWaiver;
+    string icon = item.SetValidationFailed.SecurityWaiver_ValidationFailed;
+    foreach (var itemFailed in item.Validations)
+    {
+        if (itemFailed.Name == "SecurityWaiver")
+        {
+            return Html.Raw(string.Format("<input type=\"text\" id=\"SecurityWaiver\" name=\"SecurityWaiver_{0}\" value=\"{1}\" class=\"form-control redcolor\" style=\"border:1; border-color:red;width:250px;\" /> <div class=\"input-group\">{2}</div>", row, text, icon));
+        }
+    }
+    return Html.Raw(string.Format("<input type=\"text\" id=\"SecurityWaiver\" name=\"SecurityWaiver_{0}\" class=\"form-control\" style=\"width:250px;\" value=\"{1}\" />", row, text));
+}),
+
+grid.Column(header: "Security Waiver Notes", format: (item) =>
+{
+    int row = item.WebGrid.Rows.IndexOf(item);
+    string text = item.SecurityWaiverNotes;
+    string icon = item.SetValidationFailed.SecurityWaiverNotes_ValidationFailed;
+    foreach (var itemFailed in item.Validations)
+    {
+        if (itemFailed.Name == "SecurityWaiverNotes")
+        {
+            return Html.Raw(string.Format("<input type=\"text\" id=\"SecurityWaiverNotes\" name=\"SecurityWaiverNotes_{0}\" value=\"{1}\" class=\"form-control redcolor\" style=\"border:1; border-color:red;width:250px;\" /> <div class=\"input-group\">{2}</div>", row, text, icon));
+        }
+    }
+    return Html.Raw(string.Format("<input type=\"text\" id=\"SecurityWaiverNotes\" name=\"SecurityWaiverNotes_{0}\" class=\"form-control\" style=\"width:250px;\" value=\"{1}\" />", row, text));
+}),
+
+grid.Column(header: "OS", format: (item) =>
+{
+    int row = item.WebGrid.Rows.IndexOf(item);
+    string text = item.OS;
+    string icon = item.SetValidationFailed.OS_ValidationFailed;
+    foreach (var itemFailed in item.Validations)
+    {
+        if (itemFailed.Name == "OS")
+        {
+            return Html.Raw(string.Format("<input type=\"text\" id=\"OS\" name=\"OS_{0}\" value=\"{1}\" class=\"form-control redcolor\" style=\"border:1; border-color:red;width:250px;\" /> <div class=\"input-group\">{2}</div>", row, text, icon));
+        }
+    }
+    return Html.Raw(string.Format("<input type=\"text\" id=\"OS\" name=\"OS_{0}\" class=\"form-control\" style=\"width:250px;\" value=\"{1}\" />", row, text));
+}),
+
+grid.Column(header: "OS Minor", format: (item) =>
+{
+    int row = item.WebGrid.Rows.IndexOf(item);
+    string text = item.OSMinor;
+    string icon = item.SetValidationFailed.OSMinor_ValidationFailed;
+    foreach (var itemFailed in item.Validations)
+    {
+        if (itemFailed.Name == "OSMinor")
+        {
+            return Html.Raw(string.Format("<input type=\"text\" id=\"OSMinor\" name=\"OSMinor_{0}\" value=\"{1}\" class=\"form-control redcolor\" style=\"border:1; border-color:red;width:250px;\" /> <div class=\"input-group\">{2}</div>", row, text, icon));
+        }
+    }
+    return Html.Raw(string.Format("<input type=\"text\" id=\"OSMinor\" name=\"OSMinor_{0}\" class=\"form-control\" style=\"width:250px;\" value=\"{1}\" />", row, text));
+}),
+
+grid.Column(header: "OS Patch Level", format: (item) =>
+{
+    int row = item.WebGrid.Rows.IndexOf(item);
+    string text = item.OSPatchLevel;
+    string icon = item.SetValidationFailed.OSPatchLevel_ValidationFailed;
+    foreach (var itemFailed in item.Validations)
+    {
+        if (itemFailed.Name == "OSPatchLevel")
+        {
+            return Html.Raw(string.Format("<input type=\"text\" id=\"OSPatchLevel\" name=\"OSPatchLevel_{0}\" value=\"{1}\" class=\"form-control redcolor\" style=\"border:1; border-color:red;width:250px;\" /> <div class=\"input-group\">{2}</div>", row, text, icon));
+        }
+    }
+    return Html.Raw(string.Format("<input type=\"text\" id=\"OSPatchLevel\" name=\"OSPatchLevel_{0}\" class=\"form-control\" style=\"width:250px;\" value=\"{1}\" />", row, text));
+}),
+
+grid.Column(header: "Kernel Patch", format: (item) =>
+{
+    int row = item.WebGrid.Rows.IndexOf(item);
+    string text = item.KernelPatch;
+    string icon = item.SetValidationFailed.KernelPatch_ValidationFailed;
+    foreach (var itemFailed in item.Validations)
+    {
+        if (itemFailed.Name == "KernelPatch")
+        {
+            return Html.Raw(string.Format("<input type=\"text\" id=\"KernelPatch\" name=\"KernelPatch_{0}\" value=\"{1}\" class=\"form-control redcolor\" style=\"border:1; border-color:red;width:250px;\" /> <div class=\"input-group\">{2}</div>", row, text, icon));
+        }
+    }
+    return Html.Raw(string.Format("<input type=\"text\" id=\"KernelPatch\" name=\"KernelPatch_{0}\" class=\"form-control\" style=\"width:250px;\" value=\"{1}\" />", row, text));
+}),
+
+grid.Column(header: "Patching Group", format: (item) =>
+{
+    int row = item.WebGrid.Rows.IndexOf(item);
+    string text = item.PatchingGroup;
+    string icon = item.SetValidationFailed.PatchingGroup_ValidationFailed;
+    foreach (var itemFailed in item.Validations)
+    {
+        if (itemFailed.Name == "PatchingGroup")
+        {
+            return Html.Raw(string.Format("<input type=\"text\" id=\"PatchingGroup\" name=\"PatchingGroup_{0}\" value=\"{1}\" class=\"form-control redcolor\" style=\"border:1; border-color:red;width:250px;\" /> <div class=\"input-group\">{2}</div>", row, text, icon));
+        }
+    }
+    return Html.Raw(string.Format("<input type=\"text\" id=\"PatchingGroup\" name=\"PatchingGroup_{0}\" class=\"form-control\" style=\"width:250px;\" value=\"{1}\" />", row, text));
+}),
+
+grid.Column(header: "ServiceIP", format: (item) =>
+{
+    int row = item.WebGrid.Rows.IndexOf(item);
+    string text = item.ServiceIP;
+    string icon = item.SetValidationFailed.ServiceIP_ValidationFailed;
+    foreach (var itemFailed in item.Validations)
+    {
+        if (itemFailed.Name == "ServiceIP")
+        {
+            return Html.Raw(string.Format("<input type=\"text\" id=\"ServiceIP\" name=\"ServiceIP_{0}\" value=\"{1}\" class=\"form-control redcolor\" style=\"border:1; border-color:red;width:250px;\" /> <div class=\"input-group\">{2}</div>", row, text, icon));
+        }
+    }
+    return Html.Raw(string.Format("<input type=\"text\" id=\"ServiceIP\" name=\"ServiceIP_{0}\" class=\"form-control\" style=\"width:250px;\" value=\"{1}\" />", row, text));
+}),
+
+grid.Column(header: "Service FQDN", format: (item) =>
+{
+    int row = item.WebGrid.Rows.IndexOf(item);
+    string text = item.ServiceFQDN;
+    string icon = item.SetValidationFailed.ServiceFQDN_ValidationFailed;
+    foreach (var itemFailed in item.Validations)
+    {
+        if (itemFailed.Name == "ServiceFQDN")
+        {
+            return Html.Raw(string.Format("<input type=\"text\" id=\"ServiceFQDN\" name=\"ServiceFQDN_{0}\" value=\"{1}\" class=\"form-control redcolor\" style=\"border:1; border-color:red;width:250px;\" /> <div class=\"input-group\">{2}</div>", row, text, icon));
+        }
+    }
+    return Html.Raw(string.Format("<input type=\"text\" id=\"ServiceFQDN\" name=\"ServiceFQDN_{0}\" class=\"form-control\" style=\"width:250px;\" value=\"{1}\" />", row, text));
+}),
+
+grid.Column(header: "Console Access", format: (item) =>
+{
+    int row = item.WebGrid.Rows.IndexOf(item);
+    string text = item.ConsoleAccess;
+    string icon = item.SetValidationFailed.ConsoleAccess_ValidationFailed;
+    foreach (var itemFailed in item.Validations)
+    {
+        if (itemFailed.Name == "ConsoleAccess")
+        {
+            return Html.Raw(string.Format("<input type=\"text\" id=\"ConsoleAccess\" name=\"ConsoleAccess_{0}\" value=\"{1}\" class=\"form-control redcolor\" style=\"border:1; border-color:red;width:250px;\" /> <div class=\"input-group\">{2}</div>", row, text, icon));
+        }
+    }
+    return Html.Raw(string.Format("<input type=\"text\" id=\"ConsoleAccess\" name=\"ConsoleAccess_{0}\" class=\"form-control\" style=\"width:250px;\" value=\"{1}\" />", row, text));
+}),
+
+grid.Column(header: "CPU Cores", format: (item) =>
+{
+    int row = item.WebGrid.Rows.IndexOf(item);
+    string text = item.CPUCores;
+    string icon = item.SetValidationFailed.CPUCores_ValidationFailed;
+    foreach (var itemFailed in item.Validations)
+    {
+        if (itemFailed.Name == "CPUCores")
+        {
+            return Html.Raw(string.Format("<input type=\"text\" id=\"CPUCores\" name=\"CPUCores_{0}\" value=\"{1}\" class=\"form-control redcolor\" style=\"border:1; border-color:red;width:250px;\" /> <div class=\"input-group\">{2}</div>", row, text, icon));
+        }
+    }
+    return Html.Raw(string.Format("<input type=\"text\" id=\"CPUCores\" name=\"CPUCores_{0}\" class=\"form-control\" style=\"width:250px;\" value=\"{1}\" />", row, text));
+}),
+
+grid.Column(header: "CPU Count", format: (item) =>
+{
+    int row = item.WebGrid.Rows.IndexOf(item);
+    string text = item.CPUCount;
+    string icon = item.SetValidationFailed.CPUCount_ValidationFailed;
+    foreach (var itemFailed in item.Validations)
+    {
+        if (itemFailed.Name == "CPUCount")
+        {
+            return Html.Raw(string.Format("<input type=\"text\" id=\"CPUCount\" name=\"CPUCount_{0}\" value=\"{1}\" class=\"form-control redcolor\" style=\"border:1; border-color:red;width:250px;\" /> <div class=\"input-group\">{2}</div>", row, text, icon));
+        }
+    }
+    return Html.Raw(string.Format("<input type=\"text\" id=\"CPUCount\" name=\"CPUCount_{0}\" class=\"form-control\" style=\"width:250px;\" value=\"{1}\" />", row, text));
+}),
+
+grid.Column(header: "CPU Model", format: (item) =>
+{
+    int row = item.WebGrid.Rows.IndexOf(item);
+    string text = item.CPUModel;
+    string icon = item.SetValidationFailed.CPUModel_ValidationFailed;
+    foreach (var itemFailed in item.Validations)
+    {
+        if (itemFailed.Name == "CPUModel")
+        {
+            return Html.Raw(string.Format("<input type=\"text\" id=\"CPUModel\" name=\"CPUModel_{0}\" value=\"{1}\" class=\"form-control redcolor\" style=\"border:1; border-color:red;width:250px;\" /> <div class=\"input-group\">{2}</div>", row, text, icon));
+        }
+    }
+    return Html.Raw(string.Format("<input type=\"text\" id=\"CPUModel\" name=\"CPUModel_{0}\" class=\"form-control\" style=\"width:250px;\" value=\"{1}\" />", row, text));
+}),
+
+grid.Column(header: "CPU Speed", format: (item) =>
+{
+    int row = item.WebGrid.Rows.IndexOf(item);
+    string text = item.CPUSpeed;
+    string icon = item.SetValidationFailed.CPUSpeed_ValidationFailed;
+    foreach (var itemFailed in item.Validations)
+    {
+        if (itemFailed.Name == "CPUSpeed")
+        {
+            return Html.Raw(string.Format("<input type=\"text\" id=\"CPUSpeed\" name=\"CPUSpeed_{0}\" value=\"{1}\" class=\"form-control redcolor\" style=\"border:1; border-color:red;width:250px;\" /> <div class=\"input-group\">{2}</div>", row, text, icon));
+        }
+    }
+    return Html.Raw(string.Format("<input type=\"text\" id=\"CPUSpeed\" name=\"CPUSpeed_{0}\" class=\"form-control\" style=\"width:250px;\" value=\"{1}\" />", row, text));
+}),
+
+grid.Column(header: "Local Disk Capacity", format: (item) =>
+{
+    int row = item.WebGrid.Rows.IndexOf(item);
+    string text = item.LocalDiskCapacity;
+    string icon = item.SetValidationFailed.LocalDiskCapacity_ValidationFailed;
+    foreach (var itemFailed in item.Validations)
+    {
+        if (itemFailed.Name == "LocalDiskCapacity")
+        {
+            return Html.Raw(string.Format("<input type=\"text\" id=\"LocalDiskCapacity\" name=\"LocalDiskCapacity_{0}\" value=\"{1}\" class=\"form-control redcolor\" style=\"border:1; border-color:red;width:250px;\" /> <div class=\"input-group\">{2}</div>", row, text, icon));
+        }
+    }
+    return Html.Raw(string.Format("<input type=\"text\" id=\"LocalDiskCapacity\" name=\"LocalDiskCapacity_{0}\" class=\"form-control\" style=\"width:250px;\" value=\"{1}\" />", row, text));
+}),
+
+grid.Column(header: "Local Disk SlotTotal", format: (item) =>
+{
+    int row = item.WebGrid.Rows.IndexOf(item);
+    string text = item.LocalDiskSlotTotal;
+    string icon = item.SetValidationFailed.LocalDiskSlotTotal_ValidationFailed;
+    foreach (var itemFailed in item.Validations)
+    {
+        if (itemFailed.Name == "LocalDiskSlotTotal")
+        {
+            return Html.Raw(string.Format("<input type=\"text\" id=\"LocalDiskSlotTotal\" name=\"LocalDiskSlotTotal_{0}\" value=\"{1}\" class=\"form-control redcolor\" style=\"border:1; border-color:red;width:250px;\" /> <div class=\"input-group\">{2}</div>", row, text, icon));
+        }
+    }
+    return Html.Raw(string.Format("<input type=\"text\" id=\"LocalDiskSlotTotal\" name=\"LocalDiskSlotTotal_{0}\" class=\"form-control\" style=\"width:250px;\" value=\"{1}\" />", row, text));
+}),
+
+grid.Column(header: "Local Disk Installed", format: (item) =>
+{
+    int row = item.WebGrid.Rows.IndexOf(item);
+    string text = item.LocalDiskInstalled;
+    string icon = item.SetValidationFailed.LocalDiskInstalled_ValidationFailed;
+    foreach (var itemFailed in item.Validations)
+    {
+        if (itemFailed.Name == "LocalDiskInstalled")
+        {
+            return Html.Raw(string.Format("<input type=\"text\" id=\"LocalDiskInstalled\" name=\"LocalDiskInstalled_{0}\" value=\"{1}\" class=\"form-control redcolor\" style=\"border:1; border-color:red;width:250px;\" /> <div class=\"input-group\">{2}</div>", row, text, icon));
+        }
+    }
+    return Html.Raw(string.Format("<input type=\"text\" id=\"LocalDiskInstalled\" name=\"LocalDiskInstalled_{0}\" class=\"form-control\" style=\"width:250px;\" value=\"{1}\" />", row, text));
+}),
+
+grid.Column(header: "Local Raid Level", format: (item) =>
+{
+    int row = item.WebGrid.Rows.IndexOf(item);
+    string text = item.LocalRaidLevel;
+    string icon = item.SetValidationFailed.LocalRaidLevel_ValidationFailed;
+    foreach (var itemFailed in item.Validations)
+    {
+        if (itemFailed.Name == "LocalRaidLevel")
+        {
+            return Html.Raw(string.Format("<input type=\"text\" id=\"LocalRaidLevel\" name=\"LocalRaidLevel_{0}\" value=\"{1}\" class=\"form-control redcolor\" style=\"border:1; border-color:red;width:250px;\" /> <div class=\"input-group\">{2}</div>", row, text, icon));
+        }
+    }
+    return Html.Raw(string.Format("<input type=\"text\" id=\"LocalRaidLevel\" name=\"LocalRaidLevel_{0}\" class=\"form-control\" style=\"width:250px;\" value=\"{1}\" />", row, text));
+}),
+
+grid.Column(header: "Physical Memory", format: (item) =>
+{
+    int row = item.WebGrid.Rows.IndexOf(item);
+    string text = item.PhysicalMemory;
+    string icon = item.SetValidationFailed.PhysicalMemory_ValidationFailed;
+    foreach (var itemFailed in item.Validations)
+    {
+        if (itemFailed.Name == "PhysicalMemory")
+        {
+            return Html.Raw(string.Format("<input type=\"text\" id=\"PhysicalMemory\" name=\"PhysicalMemory_{0}\" value=\"{1}\" class=\"form-control redcolor\" style=\"border:1; border-color:red;width:250px;\" /> <div class=\"input-group\">{2}</div>", row, text, icon));
+        }
+    }
+    return Html.Raw(string.Format("<input type=\"text\" id=\"PhysicalMemory\" name=\"PhysicalMemory_{0}\" class=\"form-control\" style=\"width:250px;\" value=\"{1}\" />", row, text));
+}),
+
+grid.Column(header: "Sun Host Id", format: (item) =>
+{
+    int row = item.WebGrid.Rows.IndexOf(item);
+    string text = item.SunHostId;
+    string icon = item.SetValidationFailed.SunHostId_ValidationFailed;
+    foreach (var itemFailed in item.Validations)
+    {
+        if (itemFailed.Name == "SunHostId")
+        {
+            return Html.Raw(string.Format("<input type=\"text\" id=\"SunHostId\" name=\"SunHostId_{0}\" value=\"{1}\" class=\"form-control redcolor\" style=\"border:1; border-color:red;width:250px;\" /> <div class=\"input-group\">{2}</div>", row, text, icon));
+        }
+    }
+    return Html.Raw(string.Format("<input type=\"text\" id=\"SunHostId\" name=\"SunHostId_{0}\" class=\"form-control\" style=\"width:250px;\" value=\"{1}\" />", row, text));
+}),
+
+grid.Column(header: "Use State", format: (item) =>
+{
+    int row = item.WebGrid.Rows.IndexOf(item);
+    string text = item.UseState;
+    string icon = item.SetValidationFailed.UseState_ValidationFailed;
+    foreach (var itemFailed in item.Validations)
+    {
+        if (itemFailed.Name == "UseState")
+        {
+            return Html.Raw(string.Format("<input type=\"text\" id=\"UseState\" name=\"UseState_{0}\" value=\"{1}\" class=\"form-control redcolor\" style=\"border:1; border-color:red;width:250px;\" /> <div class=\"input-group\">{2}</div>", row, text, icon));
+        }
+    }
+    return Html.Raw(string.Format("<input type=\"text\" id=\"UseState\" name=\"UseState_{0}\" class=\"form-control\" style=\"width:250px;\" value=\"{1}\" />", row, text));
+}),
+
+grid.Column(header: "Purchase Date", format: (item) =>
+{
+    int row = item.WebGrid.Rows.IndexOf(item);
+    string sn = item.PurchaseDate.ToString("d");
+    return Html.Raw(string.Format("<div class=\"form-group\"><div class=\"input-group col-xs-5\"><input type=\"text\" id=\"PurchaseDate_{0}\" name=\"PurchaseDate_{0}\" value=\"{1}\" class=\"form-control date\" style=\"width:200px;\" /><span class=\"input-group-addon\"><i class=\"glyphicon glyphicon-calendar\" aria-hidden=\"true\"></i></span></div></div>", row, sn));
+}),
+
+grid.Column(header: "Ownership", format: (item) =>
+{
+    int row = item.WebGrid.Rows.IndexOf(item);
+    string text = item.Ownership;
+    string icon = item.SetValidationFailed.Ownership_ValidationFailed;
+    foreach (var itemFailed in item.Validations)
+    {
+        if (itemFailed.Name == "Ownership")
+        {
+            return Html.Raw(string.Format("<input type=\"text\" id=\"Ownership\" name=\"Ownership_{0}\" value=\"{1}\" class=\"form-control redcolor\" style=\"border:1; border-color:red;width:250px;\" /> <div class=\"input-group\">{2}</div>", row, text, icon));
+        }
+    }
+    return Html.Raw(string.Format("<input type=\"text\" id=\"Ownership\" name=\"Ownership_{0}\" class=\"form-control\" style=\"width:250px;\" value=\"{1}\" />", row, text));
+}),
+
+grid.Column(header: "Time Zone", format: (item) =>
+{
+    int row = item.WebGrid.Rows.IndexOf(item);
+    string text = item.TimeZone;
+    string icon = item.SetValidationFailed.TimeZone_ValidationFailed;
+    foreach (var itemFailed in item.Validations)
+    {
+        if (itemFailed.Name == "TimeZone")
+        {
+            return Html.Raw(string.Format("<input type=\"text\" id=\"TimeZone\" name=\"TimeZone_{0}\" value=\"{1}\" class=\"form-control redcolor\" style=\"border:1; border-color:red;width:250px;\" /> <div class=\"input-group\">{2}</div>", row, text, icon));
+        }
+    }
+    return Html.Raw(string.Format("<input type=\"text\" id=\"TimeZone\" name=\"TimeZone_{0}\" class=\"form-control\" style=\"width:250px;\" value=\"{1}\" />", row, text));
+}),
+
+grid.Column(header: "Street Address", format: (item) =>
+{
+    int row = item.WebGrid.Rows.IndexOf(item);
+    string text = item.StreetAddress;
+    string icon = item.SetValidationFailed.StreetAddress_ValidationFailed;
+    foreach (var itemFailed in item.Validations)
+    {
+        if (itemFailed.Name == "StreetAddress")
+        {
+            return Html.Raw(string.Format("<input type=\"text\" id=\"StreetAddress\" name=\"StreetAddress_{0}\" value=\"{1}\" class=\"form-control redcolor\" style=\"border:1; border-color:red;width:250px;\" /> <div class=\"input-group\">{2}</div>", row, text, icon));
+        }
+    }
+    return Html.Raw(string.Format("<input type=\"text\" id=\"StreetAddress\" name=\"StreetAddress_{0}\" class=\"form-control\" style=\"width:250px;\" value=\"{1}\" />", row, text));
+}),
+
+grid.Column(header: "Regulation Compliance", format: (item) =>
+{
+    int row = item.WebGrid.Rows.IndexOf(item);
+    string text = item.RegulationCompliance;
+    string icon = item.SetValidationFailed.RegulationCompliance_ValidationFailed;
+    foreach (var itemFailed in item.Validations)
+    {
+        if (itemFailed.Name == "RegulationCompliance")
+        {
+            return Html.Raw(string.Format("<input type=\"text\" id=\"RegulationCompliance\" name=\"RegulationCompliance_{0}\" value=\"{1}\" class=\"form-control redcolor\" style=\"border:1; border-color:red;width:250px;\" /> <div class=\"input-group\">{2}</div>", row, text, icon));
+        }
+    }
+    return Html.Raw(string.Format("<input type=\"text\" id=\"RegulationCompliance\" name=\"RegulationCompliance_{0}\" class=\"form-control\" style=\"width:250px;\" value=\"{1}\" />", row, text));
+}),
+
+grid.Column(header: "InCluster", format: (item) =>
+{
+    int row = item.WebGrid.Rows.IndexOf(item);
+    string text = item.InCluster;
+    string icon = item.SetValidationFailed.InCluster_ValidationFailed;
+    foreach (var itemFailed in item.Validations)
+    {
+        if (itemFailed.Name == "InCluster")
+        {
+            return Html.Raw(string.Format("<input type=\"text\" id=\"InCluster\" name=\"InCluster_{0}\" value=\"{1}\" class=\"form-control redcolor\" style=\"border:1; border-color:red;width:250px;\" /> <div class=\"input-group\">{2}</div>", row, text, icon));
+        }
+    }
+    return Html.Raw(string.Format("<input type=\"text\" id=\"InCluster\" name=\"InCluster_{0}\" class=\"form-control\" style=\"width:250px;\" value=\"{1}\" />", row, text));
+}),
+
+grid.Column(header: "RebootAutomatic", format: (item) =>
+{
+    int row = item.WebGrid.Rows.IndexOf(item);
+    string text = item.RebootAutomatic;
+    string icon = item.SetValidationFailed.RebootAutomatic_ValidationFailed;
+    foreach (var itemFailed in item.Validations)
+    {
+        if (itemFailed.Name == "RebootAutomatic")
+        {
+            return Html.Raw(string.Format("<input type=\"text\" id=\"RebootAutomatic\" name=\"RebootAutomatic_{0}\" value=\"{1}\" class=\"form-control redcolor\" style=\"border:1; border-color:red;width:250px;\" /> <div class=\"input-group\">{2}</div>", row, text, icon));
+        }
+    }
+    return Html.Raw(string.Format("<input type=\"text\" id=\"RebootAutomatic\" name=\"RebootAutomatic_{0}\" class=\"form-control\" style=\"width:250px;\" value=\"{1}\" />", row, text));
+}),
+
+grid.Column(header: "RebootNotes", format: (item) =>
+{
+    int row = item.WebGrid.Rows.IndexOf(item);
+    string text = item.RebootNotes;
+    string icon = item.SetValidationFailed.RebootNotes_ValidationFailed;
+    foreach (var itemFailed in item.Validations)
+    {
+        if (itemFailed.Name == "RebootNotes")
+        {
+            return Html.Raw(string.Format("<input type=\"text\" id=\"RebootNotes\" name=\"RebootNotes_{0}\" value=\"{1}\" class=\"form-control redcolor\" style=\"border:1; border-color:red;width:250px;\" /> <div class=\"input-group\">{2}</div>", row, text, icon));
+        }
+    }
+    return Html.Raw(string.Format("<input type=\"text\" id=\"RebootNotes\" name=\"RebootNotes_{0}\" class=\"form-control\" style=\"width:250px;\" value=\"{1}\" />", row, text));
+}),
+
+grid.Column(header: "Master Backup Server", format: (item) =>
+{
+    int row = item.WebGrid.Rows.IndexOf(item);
+    string text = item.MasterBackupServer;
+    string icon = item.SetValidationFailed.MasterBackupServer_ValidationFailed;
+    foreach (var itemFailed in item.Validations)
+    {
+        if (itemFailed.Name == "MasterBackupServer")
+        {
+            return Html.Raw(string.Format("<input type=\"text\" id=\"MasterBackupServer\" name=\"MasterBackupServer_{0}\" value=\"{1}\" class=\"form-control redcolor\" style=\"border:1; border-color:red;width:250px;\" /> <div class=\"input-group\">{2}</div>", row, text, icon));
+        }
+    }
+    return Html.Raw(string.Format("<input type=\"text\" id=\"MasterBackupServer\" name=\"MasterBackupServer_{0}\" class=\"form-control\" style=\"width:250px;\" value=\"{1}\" />", row, text));
+}),
+
+grid.Column(header: "Backup IP", format: (item) =>
+{
+    int row = item.WebGrid.Rows.IndexOf(item);
+    string text = item.BackupIP;
+    string icon = item.SetValidationFailed.BackupIP_ValidationFailed;
+    foreach (var itemFailed in item.Validations)
+    {
+        if (itemFailed.Name == "BackupIP")
+        {
+            return Html.Raw(string.Format("<input type=\"text\" id=\"BackupIP\" name=\"BackupIP_{0}\" value=\"{1}\" class=\"form-control redcolor\" style=\"border:1; border-color:red;width:250px;\" /> <div class=\"input-group\">{2}</div>", row, text, icon));
+        }
+    }
+    return Html.Raw(string.Format("<input type=\"text\" id=\"BackupIP\" name=\"BackupIP_{0}\" class=\"form-control\" style=\"width:250px;\" value=\"{1}\" />", row, text));
+}),
+
+grid.Column(header: "VMPlatform", format: (item) =>
+{
+    int row = item.WebGrid.Rows.IndexOf(item);
+    string text = item.VMPlatform;
+    string icon = item.SetValidationFailed.VMPlatform_ValidationFailed;
+    foreach (var itemFailed in item.Validations)
+    {
+        if (itemFailed.Name == "VMPlatform")
+        {
+            return Html.Raw(string.Format("<input type=\"text\" id=\"VMPlatform\" name=\"VMPlatform_{0}\" value=\"{1}\" class=\"form-control redcolor\" style=\"border:1; border-color:red;width:250px;\" /> <div class=\"input-group\">{2}</div>", row, text, icon));
+        }
+    }
+    return Html.Raw(string.Format("<input type=\"text\" id=\"VMPlatform\" name=\"VMPlatform_{0}\" class=\"form-control\" style=\"width:250px;\" value=\"{1}\" />", row, text));
+}),
+
+grid.Column(header: "VMHost", format: (item) =>
+{
+    int row = item.WebGrid.Rows.IndexOf(item);
+    string text = item.VMHost;
+    string icon = item.SetValidationFailed.VMHost_ValidationFailed;
+    foreach (var itemFailed in item.Validations)
+    {
+        if (itemFailed.Name == "VMHost")
+        {
+            return Html.Raw(string.Format("<input type=\"text\" id=\"VMHost\" name=\"VMHost_{0}\" value=\"{1}\" class=\"form-control redcolor\" style=\"border:1; border-color:red;width:250px;\" /> <div class=\"input-group\">{2}</div>", row, text, icon));
+        }
+    }
+    return Html.Raw(string.Format("<input type=\"text\" id=\"VMHost\" name=\"VMHost_{0}\" class=\"form-control\" style=\"width:250px;\" value=\"{1}\" />", row, text));
+}),
+
+grid.Column(header: "PrimaryApplication", format: (item) =>
+{
+    int row = item.WebGrid.Rows.IndexOf(item);
+    string text = item.PrimaryApplication;
+    string icon = item.SetValidationFailed.ServerType_ValidationFailed;
+    foreach (var itemFailed in item.Validations)
+    {
+        if (itemFailed.Name == "PrimaryApplication")
+        {
+            return Html.Raw(string.Format("<input type=\"text\" id=\"PrimaryApplication\" name=\"PrimaryApplication_{0}\" value=\"{1}\" class=\"form-control redcolor\" style=\"border:1; border-color:red;width:250px;\" /> <div class=\"input-group\">{2}</div>", row, text, icon));
+        }
+    }
+    return Html.Raw(string.Format("<input type=\"text\" id=\"PrimaryApplication\" name=\"PrimaryApplication_{0}\" class=\"form-control\" style=\"width:250px;\" value=\"{1}\" />", row, text));
+}),
+
+grid.Column(header: "BackupAgent", format: (item) =>
+{
+    int row = item.WebGrid.Rows.IndexOf(item);
+    string text = item.BackupAgent;
+    string icon = item.SetValidationFailed.BackupAgent_ValidationFailed;
+    foreach (var itemFailed in item.Validations)
+    {
+        if (itemFailed.Name == "BackupAgent")
+        {
+            return Html.Raw(string.Format("<input type=\"text\" id=\"BackupAgent\" name=\"BackupAgent_{0}\" value=\"{1}\" class=\"form-control redcolor\" style=\"border:1; border-color:red;width:250px;\" /> <div class=\"input-group\">{2}</div>", row, text, icon));
+        }
+    }
+    return Html.Raw(string.Format("<input type=\"text\" id=\"BackupAgent\" name=\"BackupAgent_{0}\" class=\"form-control\" style=\"width:250px;\" value=\"{1}\" />", row, text));
+}),
+
+grid.Column(header: "MonitorAgent", format: (item) =>
+{
+    int row = item.WebGrid.Rows.IndexOf(item);
+    string text = item.MonitorAgent;
+    string icon = item.SetValidationFailed.MonitorAgent_ValidationFailed;
+    foreach (var itemFailed in item.Validations)
+    {
+        if (itemFailed.Name == "MonitorAgent")
+        {
+            return Html.Raw(string.Format("<input type=\"text\" id=\"MonitorAgent\" name=\"MonitorAgent_{0}\" value=\"{1}\" class=\"form-control redcolor\" style=\"border:1; border-color:red;width:250px;\" /> <div class=\"input-group\">{2}</div>", row, text, icon));
+        }
+    }
+    return Html.Raw(string.Format("<input type=\"text\" id=\"MonitorAgent\" name=\"MonitorAgent_{0}\" class=\"form-control\" style=\"width:250px;\" value=\"{1}\" />", row, text));
+}),
+
+grid.Column(header: "Location", format: (item) =>
+{
+    int row = item.WebGrid.Rows.IndexOf(item);
+    string text = item.Location;
+    string icon = item.SetValidationFailed.Location_ValidationFailed;
+    foreach (var itemFailed in item.Validations)
+    {
+        if (itemFailed.Name == "Location")
+        {
+            return Html.Raw(string.Format("<input type=\"text\" id=\"Location\" name=\"Location_{0}\" value=\"{1}\" class=\"form-control redcolor\" style=\"border:1; border-color:red;width:250px;\" /> <div class=\"input-group\">{2}</div>", row, text, icon));
+        }
+    }
+    return Html.Raw(string.Format("<input type=\"text\" id=\"Location\" name=\"Location_{0}\" class=\"form-control\" style=\"width:250px;\" value=\"{1}\" />", row, text));
+}),
+
+grid.Column(header: "RackShelf", format: (item) =>
+{
+    int row = item.WebGrid.Rows.IndexOf(item);
+    string text = item.RackShelf;
+    string icon = item.SetValidationFailed.RackShelf_ValidationFailed;
+    foreach (var itemFailed in item.Validations)
+    {
+        if (itemFailed.Name == "RackShelf")
+        {
+            return Html.Raw(string.Format("<input type=\"text\" id=\"RackShelf\" name=\"RackShelf_{0}\" value=\"{1}\" class=\"form-control redcolor\" style=\"border:1; border-color:red;width:250px;\" /> <div class=\"input-group\">{2}</div>", row, text, icon));
+        }
+    }
+    return Html.Raw(string.Format("<input type=\"text\" id=\"RackShelf\" name=\"RackShelf_{0}\" class=\"form-control\" style=\"width:250px;\" value=\"{1}\" />", row, text));
+}),
+
+grid.Column(header: "DCLocation", format: (item) =>
+{
+    int row = item.WebGrid.Rows.IndexOf(item);
+    string text = item.DCLocation;
+    string icon = item.SetValidationFailed.DCLocation_ValidationFailed;
+    foreach (var itemFailed in item.Validations)
+    {
+        if (itemFailed.Name == "DCLocation")
+        {
+            return Html.Raw(string.Format("<input type=\"text\" id=\"DCLocation\" name=\"DCLocation_{0}\" value=\"{1}\" class=\"form-control redcolor\" style=\"border:1; border-color:red;width:250px;\" /> <div class=\"input-group\">{2}</div>", row, text, icon));
+        }
+    }
+    return Html.Raw(string.Format("<input type=\"text\" id=\"DCLocation\" name=\"DCLocation_{0}\" class=\"form-control\" style=\"width:250px;\" value=\"{1}\" />", row, text));
+}),
+
+grid.Column(header: "Model", format: (item) =>
+{
+    int row = item.WebGrid.Rows.IndexOf(item);
+    string text = item.Model;
+    string icon = item.SetValidationFailed.Model_ValidationFailed;
+    foreach (var itemFailed in item.Validations)
+    {
+        if (itemFailed.Name == "Model")
+        {
+            return Html.Raw(string.Format("<input type=\"text\" id=\"Model\" name=\"Model_{0}\" value=\"{1}\" class=\"form-control redcolor\" style=\"border:1; border-color:red;width:250px;\" /> <div class=\"input-group\">{2}</div>", row, text, icon));
+        }
+    }
+    return Html.Raw(string.Format("<input type=\"text\" id=\"Model\" name=\"Model_{0}\" class=\"form-control\" style=\"width:250px;\" value=\"{1}\" />", row, text));
+}),
+
+grid.Column(header: "Vendor", format: (item) =>
+{
+    int row = item.WebGrid.Rows.IndexOf(item);
+    string text = item.Vendor;
+    string icon = item.SetValidationFailed.Vendor_ValidationFailed;
+    foreach (var itemFailed in item.Validations)
+    {
+        if (itemFailed.Name == "Vendor")
+        {
+            return Html.Raw(string.Format("<input type=\"text\" id=\"Vendor\" name=\"Vendor_{0}\" value=\"{1}\" class=\"form-control redcolor\" style=\"border:1; border-color:red;width:250px;\" /> <div class=\"input-group\">{2}</div>", row, text, icon));
+        }
+    }
+    return Html.Raw(string.Format("<input type=\"text\" id=\"Vendor\" name=\"Vendor_{0}\" class=\"form-control\" style=\"width:250px;\" value=\"{1}\" />", row, text));
+}),
+
+grid.Column(header: "Asset Tag", format: (item) =>
+{
+    int row = item.WebGrid.Rows.IndexOf(item);
+    string text = item.AssetTag;
+    string icon = item.SetValidationFailed.AssetTag_ValidationFailed;
+    foreach (var itemFailed in item.Validations)
+    {
+        if (itemFailed.Name == "AssetTag")
+        {
+            if (!string.IsNullOrEmpty(icon))
+            {
+                return Html.Raw(string.Format("<input type=\"text\" id=\"AssetTag\" name=\"AssetTag_{0}\" value=\"{1}\" class=\"form-control redcolor\" style=\"border:1; border-color:red;width:250px;\" /> <div class=\"input-group\">{2}</div>", row, text, icon));
+            }
+        }
+    }
+    return Html.Raw(string.Format("<input type=\"text\" id=\"AssetTag\" name=\"AssetTag_{0}\" class=\"form-control\" style=\"width:250px;\" value=\"{1}\" />", row, text));
+}),
+
+grid.Column(header: "Warranty End Date", format: (item) =>
+{
+    int row = item.WebGrid.Rows.IndexOf(item);
+    string sn = item.WarrantyEndDate.ToString("d");
+    return Html.Raw(string.Format("<div class=\"form-group\"><div class=\"input-group col-xs-5\"><input type=\"text\" id=\"WarrantyEndDate_{0}\" name=\"WarrantyEndDate_{0}\" value=\"{1}\" class=\"form-control date\" style=\"width:200px;\" /><span class=\"input-group-addon\"><i class=\"glyphicon glyphicon-calendar\" aria-hidden=\"true\"></i></span></div></div>", row, sn));
+})
+))
+
+                                    }
+                                    else
+                                    {
+                                        <div class="alert alert-info" role="alert">No Data</div>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>

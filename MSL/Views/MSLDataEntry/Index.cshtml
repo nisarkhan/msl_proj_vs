@@ -1,0 +1,47 @@
+﻿ 
+ 
+
+<div class="row">
+    <div class="col-md-12">
+        <!-- Tabs -->
+        <div class="panel panel-default">
+            <h3 class="panel-heading">
+                <ul class="nav nav-tabs" role="tablist">
+                    <li class="active">
+                        <a href="#client_system" role="tab" data-toggle="tab">
+                            <i class="fa fa-clock-o text-gray"></i>
+                            Client & System
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#maintenance" role="tab" data-toggle="tab">
+                            <i class="fa fa-pencil-square text-blue"></i>
+                            Maintenance
+                            <span class="badge" ng-show="applications.under_review.length > 0">{{applications.under_review.length}}</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#system_compliance" role="tab" data-toggle="tab">
+                            <i class="fa fa-check-square-o text-green"></i>
+                            System & Compliance
+                            <span class="badge" ng-show="applications.approved.length > 0">{{applications.approved.length}}</span>
+                        </a>
+                    </li>
+                </ul>
+            </h3>
+            <div class="panel-body">
+                <div class="tab-content">
+                    <div class="tab-pane active" id="client_system">
+                        @Html.Partial("~/Views/MSLDataEntry/_clientSystem.cshtml")
+                    </div>
+                    <div class="tab-pane" id="maintenance">
+                         @Html.Partial("~/Views/MSLDataEntry/_maintenance.cshtml")
+                    </div>
+                    <div class="tab-pane" id="system_compliance">
+                         @Html.Partial("~/Views/MSLDataEntry/_systemCompliance.cshtml")
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

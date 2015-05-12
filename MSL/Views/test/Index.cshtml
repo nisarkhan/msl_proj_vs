@@ -1,0 +1,243 @@
+﻿@model MSL.Models.ImportViewModel
+
+
+@section scripts{
+    <script src="~/Scripts/AppScripts/PagerScript.js"></script>
+}
+
+@if (TempData["message"] != null)
+{ @Html.Partial("~/Views/Shared/_notification.cshtml");
+}
+
+<style type="text/css">
+    .space-box {
+        margin: 10px;
+    }
+
+    .alert-danger {
+        background-color: #D9534F;
+        border-color: #C34844;
+        color: #FFF;
+    }
+
+    .redcolor {
+        color: red;
+    }
+
+    .webgrid-table {
+        font-family: Arial,Helvetica,sans-serif;
+        font-size: 14px;
+        font-weight: normal;
+        width: 650px;
+        display: table;
+        border-collapse: collapse;
+        border: solid px #C5C5C5;
+        background-color: white;
+    }
+
+        .webgrid-table td, th {
+            border: 1px solid #C5C5C5;
+            padding: 3px 7px 2px;
+        }
+
+    .webgrid-header th, .webgrid-header a {
+        /*background-color: #E3E3E3;*/
+        color: black;
+        text-align: center;
+    }
+
+    .webgrid-footer {
+        padding: 3px 7px 2px;
+        background-color: #F5F5F5;
+        text-align: left;
+    }
+
+    .webgrid-row-style {
+        padding: 3px 7px 2px;
+    }
+
+    .webgrid-alternating-row {
+        background-color: #F5F5F5;
+        padding: 3px 7px 2px;
+    }
+</style>
+
+@{
+    var grid = new WebGrid(source: Model.DataModel, canPage: true, rowsPerPage: Model.PageSize, ajaxUpdateContainerId: "tblimportDevices");
+    grid.Pager(WebGridPagerModes.All);
+}
+
+
+
+<br /><br />
+
+<div class="col-lg-12">
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            Upload Server Import Template File:
+        </div>
+        <div class="panel-body">
+            @using (Html.BeginForm("Index", "MSLSystemAdmin", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="panel-body">
+                            <div class="row">
+                                @*<div class="col-xs-7">
+                                        <input name="file" type="file" class="form-control"  />
+                                    </div>*@
+                                <div class="form-group">
+                                    <div class="col-xs-7">
+                                        <input id="fileUpload" name="file" type="file" class="form-control" onchange="checkfile(this);" />
+                                    </div>
+                                    <div class="col-xs-3">
+                                        <button id="btnImportData" class="btn btn-info" type="submit">
+                                            <span> <i class="fa fa-upload"></i>  Import Data </span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <p></p>
+                            <div class="row">
+                                <div class="col-xs-10">
+                                    <div><b>File Location :</b> @Session["fileLocation"]</div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<div class="col-lg-12">
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            <h3 class="panel-title">Edit/Verify Imported Server Records</h3>
+        </div>
+
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-xs-4">
+                    <div class="form-group">
+                        <label for="" class="col-xs-5 control-label">Rows per page:</label>
+                        <div class="col-xs-4">
+                            @using (Html.BeginForm("Index", "MSLSystemAdmin", FormMethod.Post, new { @id = "form_header_pager" }))
+                            {
+
+                                @Html.DropDownListFor(m => m.PageSize,
+                                        new List<SelectListItem>
+                                        {
+                                            new SelectListItem() { Text = "10", Value = "10" },
+                                            new SelectListItem() { Text = "25", Value = "25" },
+                                            new SelectListItem() { Text = "50", Value = "50" },
+                                            new SelectListItem() { Text = "ALL", Value = "ALL" }
+                                        }, new { @class = "form-control", Name = "PageSizeSelect" })
+                            }
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+
+            <div class="col-lg-14">
+                <div class="panel-body">
+                    <div class="row">
+                        @using (Html.BeginForm("Index", "test", FormMethod.Post, new { @id = "form_header" }))
+                        {
+                            <div class="row text-right">
+                                <div class="col-xs-12">
+                                    <button class="btn btn-success" type="submit" id="btnSavetoDB" name="submitButton" value="Save to DB">
+                                        <span> <i class="fa fa-save"></i>  Save to Database </span>
+                                    </button>
+                                    &nbsp;&nbsp;&nbsp;
+                                    <button class="btn btn-danger" type="submit" id="btnRemoveFromGrid" name="submitButton" value="Remove Item From Grid">
+                                        <span> <i class="fa fa-remove"></i>  Remove </span>
+                                    </button>
+                                    &nbsp;&nbsp;&nbsp;
+                                </div>
+                            </div>
+                            <hr />
+                            <div class="test" style="overflow: scroll; width: 100%">
+                                <div style="width: 1000px">
+                                    @if (Model != null)
+                                    {
+
+                                        @grid.GetHtml(htmlAttributes: new { id = "tblimportDevices" },
+                                                    tableStyle: "table table-bordered", //table table-hover
+                                                    headerStyle: "webgrid-header",
+                                                    footerStyle: "webgrid-footer",
+                                                    alternatingRowStyle: "webgrid-alternating-row",
+                                            //selectedRowStyle: "webgrid-selected-row",
+                                                    rowStyle: "webgrid-row-style",
+                                                    columns: grid.Columns(
+                                                                grid.Column(header: "Delete", format: @<text><input type="checkbox" name="selectedRow_@(item.WebGrid.Rows.IndexOf(item))" value="@(item.WebGrid.Rows.IndexOf(item))" /></text>),
+                                                                grid.Column(header: "Row", format: @<text><input readonly name="rowNumber_@(item.WebGrid.Rows.IndexOf(item))" value="@(item.WebGrid.Rows.IndexOf(item) + 1)" style="width:40px;border:0; background-color:transparent;" /></text>),
+                                                                grid.Column(header: "Location", format: @<input type="text" id="Location" name="location_@(item.WebGrid.Rows.IndexOf(item))" value="@item.Location" style="width:250px;" />),
+                                                               
+                                                                grid.Column(header: "test", format: @<text>@Html.EditorFor(model => Model.LocalName, new { htmlAttributes = new { @class = "form-control" } })</text>),
+                                        
+                                                                grid.Column(header: "Rack Shelf", format: @<input type="text" id="RackShelf" name="rackShelf_@(item.WebGrid.Rows.IndexOf(item))" value="@item.RackShelf" style="width:50px;" />),
+                                                                grid.Column(header: "DC Location", format: @<input type="text" id="DCLocation" name="dcLocation_@(item.WebGrid.Rows.IndexOf(item))" value="@item.DCLocation" />),
+                                                                grid.Column(header: "Customer", format: @<input type="text" id="Customer" name="customer_@(item.WebGrid.Rows.IndexOf(item))" value="@item.Customer" style="width:250px;" />),
+                                                                grid.Column(header: "Serial Number", format: @<input type="text" id="SerialNumber" name="serialNumber_@(item.WebGrid.Rows.IndexOf(item))" value="@item.SerialNumber" />),
+
+                                                                grid.Column(header: "Location", format: (item) =>
+                                                                {
+                                                                    int row = item.WebGrid.Rows.IndexOf(item);
+                                                                    string value = item.Location;
+
+                                                                    if (!string.IsNullOrEmpty(item.ValidationFailed.LocationValidationFailed))
+                                                                    {
+                                                                        return Html.Raw(string.Format("<input type=\"text\" id=\"Location\" name=\"location_{0}\" value=\"{1}\" /> <div class=\"input-group\"><span class=\"fa fa-chain-broken redcolor\" title=\"wrong location name\" </span></div>", row, value));
+
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        return Html.Raw(string.Format("<input type=\"text\" id=\"Location\" name=\"location_{0}\" value=\"{1}\" />", row, value));
+                                                                        //
+                                                                    }
+                                                                }),
+
+                                                                grid.Column(header: "Serial Number", format: (item) =>
+                                                                {
+                                                                    int row = item.WebGrid.Rows.IndexOf(item);
+                                                                    string sn = item.SerialNumber;
+
+                                                                    if (!string.IsNullOrEmpty(item.ValidationFailed.SerialNumberValidationFailed))
+                                                                    {
+                                                                        return Html.Raw(string.Format("<input type=\"text\" id=\"SerialNumber\" name=\"serialNumber_{0}\" value=\"{1}\" /> <div class=\"input-group\"><span class=\"fa fa-chain-broken redcolor\" title=\"test\" </span></div>", row, sn));
+
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        return Html.Raw(string.Format("<input type=\"text\" id=\"SerialNumber\" name=\"serialNumber_{0}\" value=\"{1}\" />", row, sn));
+                                                                        //
+                                                                    }
+                                                                }),
+
+                                                                grid.Column(header: "Model", format: @<input type="text" id="Model" name="model_@(item.WebGrid.Rows.IndexOf(item))" value="@item.Model" />),
+                                                                grid.Column(header: "Use State", format: @<input type="text" name="useState_@(item.WebGrid.Rows.IndexOf(item))" id="UseState" value="@item.UseState" />),
+                                                                grid.Column(header: "Local Name", format: @<input type="text" name="localName_@(item.WebGrid.Rows.IndexOf(item))" id="LocalName" value="@item.LocalName" />),
+                                                                grid.Column(header: "Asset Tag", format: @<input type="text" name="assetTag_@(item.WebGrid.Rows.IndexOf(item))" id="AssetTag" value="@item.AssetTag" />)
+))
+
+                                    }
+                                    else
+                                    {
+                                        <div class="alert alert-info" role="alert">No Data</div>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>

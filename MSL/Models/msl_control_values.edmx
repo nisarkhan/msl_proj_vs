@@ -1,0 +1,600 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="mls_dbModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="backup_agent">
+          <Key>
+            <PropertyRef Name="backup_agent_id" />
+          </Key>
+          <Property Name="backup_agent_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="backup_agent_name" Type="nvarchar" MaxLength="60" Nullable="false" />
+          <Property Name="server_count" Type="int" />
+        </EntityType>
+        <EntityType Name="client_cost_center">
+          <Key>
+            <PropertyRef Name="client_account_id" />
+          </Key>
+          <Property Name="client_account_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="client_account_name" Type="nvarchar" MaxLength="80" Nullable="false" />
+          <Property Name="cost_center" Type="nvarchar" MaxLength="80" />
+          <Property Name="device_count" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="model_types_power">
+          <Key>
+            <PropertyRef Name="model_type_id" />
+          </Key>
+          <Property Name="model_type_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="model_name" Type="nvarchar" MaxLength="60" />
+          <Property Name="device_count" Type="nvarchar" MaxLength="5" />
+          <Property Name="kw" Type="nvarchar" MaxLength="5" />
+          <Property Name="platform" Type="nvarchar" MaxLength="5" />
+        </EntityType>
+        <EntityType Name="monitoring_agent">
+          <Key>
+            <PropertyRef Name="monitor_agent_id" />
+          </Key>
+          <Property Name="monitor_agent_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="monitor_agent_name" Type="nvarchar" MaxLength="60" Nullable="false" />
+          <Property Name="server_count" Type="int" />
+        </EntityType>
+        <EntityType Name="os_types">
+          <Key>
+            <PropertyRef Name="os_type_id" />
+          </Key>
+          <Property Name="os_type_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="os_name" Type="nvarchar" MaxLength="80" Nullable="false" />
+          <Property Name="os_vendor" Type="nvarchar" MaxLength="80" />
+          <Property Name="os_type" Type="nvarchar" MaxLength="80" />
+          <Property Name="os_category" Type="nvarchar" MaxLength="80" />
+          <Property Name="server_count" Type="nvarchar" MaxLength="10" />
+        </EntityType>
+        <EntityType Name="related_systems">
+          <Key>
+            <PropertyRef Name="related_systems_id" />
+          </Key>
+          <Property Name="related_systems_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="system_category_name" Type="nvarchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="server_categories">
+          <Key>
+            <PropertyRef Name="category_id" />
+          </Key>
+          <Property Name="category_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="category_name" Type="nvarchar" MaxLength="60" Nullable="false" />
+          <Property Name="server_count" Type="nvarchar" MaxLength="5" Nullable="false" />
+        </EntityType>
+        <EntityType Name="server_state">
+          <Key>
+            <PropertyRef Name="server_state_id" />
+          </Key>
+          <Property Name="server_state_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="server_state_name" Type="nvarchar" MaxLength="20" Nullable="false" />
+          <Property Name="server_count" Type="int" />
+        </EntityType>
+        <EntityType Name="server_types">
+          <Key>
+            <PropertyRef Name="server_type_id" />
+          </Key>
+          <Property Name="server_type_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="server_type_name" Type="nvarchar" MaxLength="30" Nullable="false" />
+          <Property Name="server_count" Type="int" />
+        </EntityType>
+        <EntityType Name="service_category">
+          <Key>
+            <PropertyRef Name="service_category_id" />
+          </Key>
+          <Property Name="service_category_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="service_category_name" Type="nvarchar" MaxLength="60" Nullable="false" />
+          <Property Name="server_count" Type="int" />
+          <Property Name="impact" Type="nvarchar" MaxLength="60" />
+          <Property Name="urgency" Type="nvarchar" MaxLength="60" />
+        </EntityType>
+        <EntityType Name="site_location">
+          <Key>
+            <PropertyRef Name="site_location_id" />
+          </Key>
+          <Property Name="site_location_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="site_location_name" Type="nvarchar" MaxLength="60" Nullable="false" />
+          <Property Name="device_count" Type="int" />
+          <Property Name="total_measured" Type="nvarchar" MaxLength="10" />
+          <Property Name="kwh_measured" Type="nvarchar" MaxLength="10" />
+          <Property Name="google_map_address" Type="nvarchar" MaxLength="100" />
+        </EntityType>
+        <EntityType Name="support_org">
+          <Key>
+            <PropertyRef Name="support_org_id" />
+          </Key>
+          <Property Name="support_org_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="support_org_name" Type="nvarchar" MaxLength="60" Nullable="false" />
+          <Property Name="support_teams" Type="int" />
+        </EntityType>
+        <EntityType Name="tko_msl_master">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="customer" Type="nvarchar" MaxLength="80" />
+          <Property Name="localname" Type="nvarchar" MaxLength="60" />
+          <Property Name="serialnumber" Type="nvarchar" MaxLength="128" />
+          <Property Name="system_state" Type="nvarchar" MaxLength="20" />
+          <Property Name="server_type" Type="nvarchar" MaxLength="30" />
+          <Property Name="category" Type="nvarchar" MaxLength="60" />
+          <Property Name="service_category" Type="nvarchar" MaxLength="60" />
+          <Property Name="country" Type="nvarchar" MaxLength="50" />
+          <Property Name="domain" Type="nvarchar" MaxLength="128" />
+          <Property Name="is_local_security" Type="nvarchar" MaxLength="10" />
+          <Property Name="security_waiver" Type="nvarchar" MaxLength="60" />
+          <Property Name="security_waiver_notes" Type="nvarchar" MaxLength="128" />
+          <Property Name="os" Type="nvarchar" MaxLength="80" />
+          <Property Name="os_minor" Type="nvarchar" MaxLength="60" />
+          <Property Name="os_patch_level" Type="nvarchar" MaxLength="160" />
+          <Property Name="kernel_patch" Type="nvarchar" MaxLength="100" />
+          <Property Name="patching_group" Type="nvarchar" MaxLength="60" />
+          <Property Name="service_ip" Type="nvarchar" MaxLength="60" />
+          <Property Name="service_fqdn" Type="nvarchar" MaxLength="128" />
+          <Property Name="console_access" Type="nvarchar" MaxLength="128" />
+          <Property Name="cpu_cores" Type="nvarchar" MaxLength="5" />
+          <Property Name="cpu_count" Type="nvarchar" MaxLength="5" />
+          <Property Name="cpu_model" Type="nvarchar" MaxLength="80" />
+          <Property Name="cpu_speed" Type="nvarchar" MaxLength="60" />
+          <Property Name="local_disk_capacity" Type="nvarchar" MaxLength="255" />
+          <Property Name="local_disk_slot_total" Type="nvarchar" MaxLength="5" />
+          <Property Name="local_disk_installed" Type="nvarchar" MaxLength="40" />
+          <Property Name="local_raid_level" Type="nvarchar" MaxLength="30" />
+          <Property Name="physical_memory" Type="nvarchar" MaxLength="20" />
+          <Property Name="purchase_date" Type="datetime" />
+          <Property Name="sun_host_id" Type="nvarchar" MaxLength="128" />
+          <Property Name="time_zone" Type="nvarchar" MaxLength="80" />
+          <Property Name="street_address" Type="nvarchar" MaxLength="200" />
+          <Property Name="regulation_compliance" Type="nvarchar" MaxLength="60" />
+          <Property Name="in_cluster" Type="nvarchar" MaxLength="10" />
+          <Property Name="reboot_automatic" Type="nvarchar" MaxLength="10" />
+          <Property Name="reboot_notes" Type="nvarchar" MaxLength="100" />
+          <Property Name="master_backup_server" Type="nvarchar" MaxLength="128" />
+          <Property Name="backup_ip" Type="nvarchar" MaxLength="15" />
+          <Property Name="vm_platform" Type="nvarchar" MaxLength="60" />
+          <Property Name="vm_host" Type="nvarchar" MaxLength="128" />
+          <Property Name="primary_application" Type="nvarchar" MaxLength="255" />
+          <Property Name="backup_agent" Type="nvarchar" MaxLength="60" />
+          <Property Name="monitor_agent" Type="nvarchar" MaxLength="60" />
+          <Property Name="location" Type="nvarchar" MaxLength="60" />
+          <Property Name="rack_shelf" Type="nvarchar" MaxLength="10" />
+          <Property Name="dc_location" Type="nvarchar" MaxLength="128" />
+          <Property Name="model" Type="nvarchar" MaxLength="60" />
+          <Property Name="use_state" Type="nvarchar" MaxLength="20" />
+          <Property Name="asset_tag" Type="nvarchar" MaxLength="30" />
+          <Property Name="warranty_end_date" Type="datetime" />
+        </EntityType>
+        <EntityType Name="vm_platform">
+          <Key>
+            <PropertyRef Name="vm_platform_id" />
+          </Key>
+          <Property Name="vm_platform_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="vm_platform_name" Type="nvarchar" MaxLength="60" Nullable="false" />
+          <Property Name="server_count" Type="int" />
+        </EntityType>
+        <EntityContainer Name="mls_dbModelStoreContainer">
+          <EntitySet Name="backup_agent" EntityType="Self.backup_agent" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="client_cost_center" EntityType="Self.client_cost_center" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="model_types_power" EntityType="Self.model_types_power" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="monitoring_agent" EntityType="Self.monitoring_agent" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="os_types" EntityType="Self.os_types" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="related_systems" EntityType="Self.related_systems" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="server_categories" EntityType="Self.server_categories" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="server_state" EntityType="Self.server_state" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="server_types" EntityType="Self.server_types" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="service_category" EntityType="Self.service_category" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="site_location" EntityType="Self.site_location" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="support_org" EntityType="Self.support_org" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="tko_msl_master" EntityType="Self.tko_msl_master" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="vm_platform" EntityType="Self.vm_platform" Schema="dbo" store:Type="Tables" />
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="mls_dbModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="backup_agent">
+          <Key>
+            <PropertyRef Name="backup_agent_id" />
+          </Key>
+          <Property Name="backup_agent_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="backup_agent_name" Type="String" MaxLength="60" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="server_count" Type="Int32" />
+        </EntityType>
+        <EntityType Name="client_cost_center">
+          <Key>
+            <PropertyRef Name="client_account_id" />
+          </Key>
+          <Property Name="client_account_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="client_account_name" Type="String" MaxLength="80" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="cost_center" Type="String" MaxLength="80" FixedLength="false" Unicode="true" />
+          <Property Name="device_count" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="model_types_power">
+          <Key>
+            <PropertyRef Name="model_type_id" />
+          </Key>
+          <Property Name="model_type_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="model_name" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
+          <Property Name="device_count" Type="String" MaxLength="5" FixedLength="false" Unicode="true" />
+          <Property Name="kw" Type="String" MaxLength="5" FixedLength="false" Unicode="true" />
+          <Property Name="platform" Type="String" MaxLength="5" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="monitoring_agent">
+          <Key>
+            <PropertyRef Name="monitor_agent_id" />
+          </Key>
+          <Property Name="monitor_agent_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="monitor_agent_name" Type="String" MaxLength="60" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="server_count" Type="Int32" />
+        </EntityType>
+        <EntityType Name="os_types">
+          <Key>
+            <PropertyRef Name="os_type_id" />
+          </Key>
+          <Property Name="os_type_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="os_name" Type="String" MaxLength="80" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="os_vendor" Type="String" MaxLength="80" FixedLength="false" Unicode="true" />
+          <Property Name="os_type" Type="String" MaxLength="80" FixedLength="false" Unicode="true" />
+          <Property Name="os_category" Type="String" MaxLength="80" FixedLength="false" Unicode="true" />
+          <Property Name="server_count" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="related_systems">
+          <Key>
+            <PropertyRef Name="related_systems_id" />
+          </Key>
+          <Property Name="related_systems_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="system_category_name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+        </EntityType>
+        <EntityType Name="server_categories">
+          <Key>
+            <PropertyRef Name="category_id" />
+          </Key>
+          <Property Name="category_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="category_name" Type="String" MaxLength="60" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="server_count" Type="String" MaxLength="5" FixedLength="false" Unicode="true" Nullable="false" />
+        </EntityType>
+        <EntityType Name="server_state">
+          <Key>
+            <PropertyRef Name="server_state_id" />
+          </Key>
+          <Property Name="server_state_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="server_state_name" Type="String" MaxLength="20" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="server_count" Type="Int32" />
+        </EntityType>
+        <EntityType Name="server_types">
+          <Key>
+            <PropertyRef Name="server_type_id" />
+          </Key>
+          <Property Name="server_type_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="server_type_name" Type="String" MaxLength="30" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="server_count" Type="Int32" />
+        </EntityType>
+        <EntityType Name="service_category">
+          <Key>
+            <PropertyRef Name="service_category_id" />
+          </Key>
+          <Property Name="service_category_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="service_category_name" Type="String" MaxLength="60" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="server_count" Type="Int32" />
+          <Property Name="impact" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
+          <Property Name="urgency" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="site_location">
+          <Key>
+            <PropertyRef Name="site_location_id" />
+          </Key>
+          <Property Name="site_location_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="site_location_name" Type="String" MaxLength="60" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="device_count" Type="Int32" />
+          <Property Name="total_measured" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="kwh_measured" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="google_map_address" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="support_org">
+          <Key>
+            <PropertyRef Name="support_org_id" />
+          </Key>
+          <Property Name="support_org_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="support_org_name" Type="String" MaxLength="60" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="support_teams" Type="Int32" />
+        </EntityType>
+        <EntityType Name="vm_platform">
+          <Key>
+            <PropertyRef Name="vm_platform_id" />
+          </Key>
+          <Property Name="vm_platform_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="vm_platform_name" Type="String" MaxLength="60" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="server_count" Type="Int32" />
+        </EntityType>
+        <EntityContainer Name="mls_dbEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="backup_agent" EntityType="Self.backup_agent" />
+          <EntitySet Name="client_cost_center" EntityType="Self.client_cost_center" />
+          <EntitySet Name="model_types_power" EntityType="Self.model_types_power" />
+          <EntitySet Name="monitoring_agent" EntityType="Self.monitoring_agent" />
+          <EntitySet Name="os_types" EntityType="Self.os_types" />
+          <EntitySet Name="related_systems" EntityType="Self.related_systems" />
+          <EntitySet Name="server_categories" EntityType="Self.server_categories" />
+          <EntitySet Name="server_state" EntityType="Self.server_state" />
+          <EntitySet Name="server_types" EntityType="Self.server_types" />
+          <EntitySet Name="service_category" EntityType="Self.service_category" />
+          <EntitySet Name="site_location" EntityType="Self.site_location" />
+          <EntitySet Name="support_org" EntityType="Self.support_org" />
+          <EntitySet Name="vm_platform" EntityType="Self.vm_platform" />
+          <EntitySet Name="tko_msl_master" EntityType="mls_dbModel.tko_msl_master" />
+        </EntityContainer>
+        <EntityType Name="tko_msl_master">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="customer" Type="String" MaxLength="80" FixedLength="false" Unicode="true" />
+          <Property Name="localname" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
+          <Property Name="serialnumber" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="system_state" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="server_type" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="category" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
+          <Property Name="service_category" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
+          <Property Name="country" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="domain" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="is_local_security" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="security_waiver" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
+          <Property Name="security_waiver_notes" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="os" Type="String" MaxLength="80" FixedLength="false" Unicode="true" />
+          <Property Name="os_minor" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
+          <Property Name="os_patch_level" Type="String" MaxLength="160" FixedLength="false" Unicode="true" />
+          <Property Name="kernel_patch" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="patching_group" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
+          <Property Name="service_ip" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
+          <Property Name="service_fqdn" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="console_access" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="cpu_cores" Type="String" MaxLength="5" FixedLength="false" Unicode="true" />
+          <Property Name="cpu_count" Type="String" MaxLength="5" FixedLength="false" Unicode="true" />
+          <Property Name="cpu_model" Type="String" MaxLength="80" FixedLength="false" Unicode="true" />
+          <Property Name="cpu_speed" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
+          <Property Name="local_disk_capacity" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="local_disk_slot_total" Type="String" MaxLength="5" FixedLength="false" Unicode="true" />
+          <Property Name="local_disk_installed" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+          <Property Name="local_raid_level" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="physical_memory" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="purchase_date" Type="DateTime" Precision="3" />
+          <Property Name="sun_host_id" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="time_zone" Type="String" MaxLength="80" FixedLength="false" Unicode="true" />
+          <Property Name="street_address" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="regulation_compliance" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
+          <Property Name="in_cluster" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="reboot_automatic" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="reboot_notes" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="master_backup_server" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="backup_ip" Type="String" MaxLength="15" FixedLength="false" Unicode="true" />
+          <Property Name="vm_platform" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
+          <Property Name="vm_host" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="primary_application" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="backup_agent" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
+          <Property Name="monitor_agent" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
+          <Property Name="location" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
+          <Property Name="rack_shelf" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="dc_location" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="model" Type="String" MaxLength="60" FixedLength="false" Unicode="true" />
+          <Property Name="use_state" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="asset_tag" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="warranty_end_date" Type="DateTime" Precision="3" />
+        </EntityType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="mls_dbModelStoreContainer" CdmEntityContainer="mls_dbEntities">
+          <EntitySetMapping Name="backup_agent">
+            <EntityTypeMapping TypeName="mls_dbModel.backup_agent">
+              <MappingFragment StoreEntitySet="backup_agent">
+                <ScalarProperty Name="backup_agent_id" ColumnName="backup_agent_id" />
+                <ScalarProperty Name="backup_agent_name" ColumnName="backup_agent_name" />
+                <ScalarProperty Name="server_count" ColumnName="server_count" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="client_cost_center">
+            <EntityTypeMapping TypeName="mls_dbModel.client_cost_center">
+              <MappingFragment StoreEntitySet="client_cost_center">
+                <ScalarProperty Name="client_account_id" ColumnName="client_account_id" />
+                <ScalarProperty Name="client_account_name" ColumnName="client_account_name" />
+                <ScalarProperty Name="cost_center" ColumnName="cost_center" />
+                <ScalarProperty Name="device_count" ColumnName="device_count" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="model_types_power">
+            <EntityTypeMapping TypeName="mls_dbModel.model_types_power">
+              <MappingFragment StoreEntitySet="model_types_power">
+                <ScalarProperty Name="model_type_id" ColumnName="model_type_id" />
+                <ScalarProperty Name="model_name" ColumnName="model_name" />
+                <ScalarProperty Name="device_count" ColumnName="device_count" />
+                <ScalarProperty Name="kw" ColumnName="kw" />
+                <ScalarProperty Name="platform" ColumnName="platform" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="monitoring_agent">
+            <EntityTypeMapping TypeName="mls_dbModel.monitoring_agent">
+              <MappingFragment StoreEntitySet="monitoring_agent">
+                <ScalarProperty Name="monitor_agent_id" ColumnName="monitor_agent_id" />
+                <ScalarProperty Name="monitor_agent_name" ColumnName="monitor_agent_name" />
+                <ScalarProperty Name="server_count" ColumnName="server_count" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="os_types">
+            <EntityTypeMapping TypeName="mls_dbModel.os_types">
+              <MappingFragment StoreEntitySet="os_types">
+                <ScalarProperty Name="os_type_id" ColumnName="os_type_id" />
+                <ScalarProperty Name="os_name" ColumnName="os_name" />
+                <ScalarProperty Name="os_vendor" ColumnName="os_vendor" />
+                <ScalarProperty Name="os_type" ColumnName="os_type" />
+                <ScalarProperty Name="os_category" ColumnName="os_category" />
+                <ScalarProperty Name="server_count" ColumnName="server_count" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="related_systems">
+            <EntityTypeMapping TypeName="mls_dbModel.related_systems">
+              <MappingFragment StoreEntitySet="related_systems">
+                <ScalarProperty Name="related_systems_id" ColumnName="related_systems_id" />
+                <ScalarProperty Name="system_category_name" ColumnName="system_category_name" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="server_categories">
+            <EntityTypeMapping TypeName="mls_dbModel.server_categories">
+              <MappingFragment StoreEntitySet="server_categories">
+                <ScalarProperty Name="category_id" ColumnName="category_id" />
+                <ScalarProperty Name="category_name" ColumnName="category_name" />
+                <ScalarProperty Name="server_count" ColumnName="server_count" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="server_state">
+            <EntityTypeMapping TypeName="mls_dbModel.server_state">
+              <MappingFragment StoreEntitySet="server_state">
+                <ScalarProperty Name="server_state_id" ColumnName="server_state_id" />
+                <ScalarProperty Name="server_state_name" ColumnName="server_state_name" />
+                <ScalarProperty Name="server_count" ColumnName="server_count" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="server_types">
+            <EntityTypeMapping TypeName="mls_dbModel.server_types">
+              <MappingFragment StoreEntitySet="server_types">
+                <ScalarProperty Name="server_type_id" ColumnName="server_type_id" />
+                <ScalarProperty Name="server_type_name" ColumnName="server_type_name" />
+                <ScalarProperty Name="server_count" ColumnName="server_count" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="service_category">
+            <EntityTypeMapping TypeName="mls_dbModel.service_category">
+              <MappingFragment StoreEntitySet="service_category">
+                <ScalarProperty Name="service_category_id" ColumnName="service_category_id" />
+                <ScalarProperty Name="service_category_name" ColumnName="service_category_name" />
+                <ScalarProperty Name="server_count" ColumnName="server_count" />
+                <ScalarProperty Name="impact" ColumnName="impact" />
+                <ScalarProperty Name="urgency" ColumnName="urgency" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="site_location">
+            <EntityTypeMapping TypeName="mls_dbModel.site_location">
+              <MappingFragment StoreEntitySet="site_location">
+                <ScalarProperty Name="site_location_id" ColumnName="site_location_id" />
+                <ScalarProperty Name="site_location_name" ColumnName="site_location_name" />
+                <ScalarProperty Name="device_count" ColumnName="device_count" />
+                <ScalarProperty Name="total_measured" ColumnName="total_measured" />
+                <ScalarProperty Name="kwh_measured" ColumnName="kwh_measured" />
+                <ScalarProperty Name="google_map_address" ColumnName="google_map_address" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="support_org">
+            <EntityTypeMapping TypeName="mls_dbModel.support_org">
+              <MappingFragment StoreEntitySet="support_org">
+                <ScalarProperty Name="support_org_id" ColumnName="support_org_id" />
+                <ScalarProperty Name="support_org_name" ColumnName="support_org_name" />
+                <ScalarProperty Name="support_teams" ColumnName="support_teams" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="vm_platform">
+            <EntityTypeMapping TypeName="mls_dbModel.vm_platform">
+              <MappingFragment StoreEntitySet="vm_platform">
+                <ScalarProperty Name="vm_platform_id" ColumnName="vm_platform_id" />
+                <ScalarProperty Name="vm_platform_name" ColumnName="vm_platform_name" />
+                <ScalarProperty Name="server_count" ColumnName="server_count" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="tko_msl_master">
+            <EntityTypeMapping TypeName="mls_dbModel.tko_msl_master">
+              <MappingFragment StoreEntitySet="tko_msl_master">
+                <ScalarProperty Name="warranty_end_date" ColumnName="warranty_end_date" />
+                <ScalarProperty Name="asset_tag" ColumnName="asset_tag" />
+                <ScalarProperty Name="use_state" ColumnName="use_state" />
+                <ScalarProperty Name="model" ColumnName="model" />
+                <ScalarProperty Name="dc_location" ColumnName="dc_location" />
+                <ScalarProperty Name="rack_shelf" ColumnName="rack_shelf" />
+                <ScalarProperty Name="location" ColumnName="location" />
+                <ScalarProperty Name="monitor_agent" ColumnName="monitor_agent" />
+                <ScalarProperty Name="backup_agent" ColumnName="backup_agent" />
+                <ScalarProperty Name="primary_application" ColumnName="primary_application" />
+                <ScalarProperty Name="vm_host" ColumnName="vm_host" />
+                <ScalarProperty Name="vm_platform" ColumnName="vm_platform" />
+                <ScalarProperty Name="backup_ip" ColumnName="backup_ip" />
+                <ScalarProperty Name="master_backup_server" ColumnName="master_backup_server" />
+                <ScalarProperty Name="reboot_notes" ColumnName="reboot_notes" />
+                <ScalarProperty Name="reboot_automatic" ColumnName="reboot_automatic" />
+                <ScalarProperty Name="in_cluster" ColumnName="in_cluster" />
+                <ScalarProperty Name="regulation_compliance" ColumnName="regulation_compliance" />
+                <ScalarProperty Name="street_address" ColumnName="street_address" />
+                <ScalarProperty Name="time_zone" ColumnName="time_zone" />
+                <ScalarProperty Name="sun_host_id" ColumnName="sun_host_id" />
+                <ScalarProperty Name="purchase_date" ColumnName="purchase_date" />
+                <ScalarProperty Name="physical_memory" ColumnName="physical_memory" />
+                <ScalarProperty Name="local_raid_level" ColumnName="local_raid_level" />
+                <ScalarProperty Name="local_disk_installed" ColumnName="local_disk_installed" />
+                <ScalarProperty Name="local_disk_slot_total" ColumnName="local_disk_slot_total" />
+                <ScalarProperty Name="local_disk_capacity" ColumnName="local_disk_capacity" />
+                <ScalarProperty Name="cpu_speed" ColumnName="cpu_speed" />
+                <ScalarProperty Name="cpu_model" ColumnName="cpu_model" />
+                <ScalarProperty Name="cpu_count" ColumnName="cpu_count" />
+                <ScalarProperty Name="cpu_cores" ColumnName="cpu_cores" />
+                <ScalarProperty Name="console_access" ColumnName="console_access" />
+                <ScalarProperty Name="service_fqdn" ColumnName="service_fqdn" />
+                <ScalarProperty Name="service_ip" ColumnName="service_ip" />
+                <ScalarProperty Name="patching_group" ColumnName="patching_group" />
+                <ScalarProperty Name="kernel_patch" ColumnName="kernel_patch" />
+                <ScalarProperty Name="os_patch_level" ColumnName="os_patch_level" />
+                <ScalarProperty Name="os_minor" ColumnName="os_minor" />
+                <ScalarProperty Name="os" ColumnName="os" />
+                <ScalarProperty Name="security_waiver_notes" ColumnName="security_waiver_notes" />
+                <ScalarProperty Name="security_waiver" ColumnName="security_waiver" />
+                <ScalarProperty Name="is_local_security" ColumnName="is_local_security" />
+                <ScalarProperty Name="domain" ColumnName="domain" />
+                <ScalarProperty Name="country" ColumnName="country" />
+                <ScalarProperty Name="service_category" ColumnName="service_category" />
+                <ScalarProperty Name="category" ColumnName="category" />
+                <ScalarProperty Name="server_type" ColumnName="server_type" />
+                <ScalarProperty Name="system_state" ColumnName="system_state" />
+                <ScalarProperty Name="serialnumber" ColumnName="serialnumber" />
+                <ScalarProperty Name="localname" ColumnName="localname" />
+                <ScalarProperty Name="customer" ColumnName="customer" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
