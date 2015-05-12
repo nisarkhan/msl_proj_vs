@@ -18,5 +18,9 @@ namespace MSL.Models
         public List<MaintenanceViewModel> MaintenanceViewModel { get; set; }
         public List<SystemComplianceViewModel> SystemComplianceViewModel { get; set; }
 
+        public string RowNumber { get; set; }
+        public string SelectedRowId { get; set; }
+
+
     }
 }
